@@ -3083,8 +3083,8 @@
           </div>
           <label class="text-xs text-slate-400 block mb-2">Content</label>
           <textarea id="twPlayContent" rows="2" class="w-full bg-slate-800 text-sm text-slate-200 rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none mb-4" oninput="twPlayUpdate()">Hello Tailwind!</textarea>
-          <label class="text-xs text-slate-400 block mb-2">Tailwind Classes</label>
-          <textarea id="twPlayInput" rows="4" class="w-full bg-slate-800 text-sm text-emerald-300 font-mono rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none resize-vertical" placeholder="e.g. bg-blue-500 text-white p-4 rounded-xl shadow-lg">bg-blue-500 text-white p-4 rounded-xl shadow-lg</textarea>
+          <label class="text-xs text-slate-400 block mb-2">HTML <span class="text-slate-600">(Tailwind classes inline)</span></label>
+          <textarea id="twPlayInput" rows="6" class="w-full bg-slate-800 text-sm text-emerald-300 font-mono rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none resize-vertical font-mono" placeholder='<div class="bg-blue-500 text-white p-4 rounded-xl shadow-lg">content</div>'>&lt;div class=&quot;bg-blue-500 text-white p-4 rounded-xl shadow-lg&quot;&gt;Hello Tailwind!&lt;/div&gt;</textarea>
           <button class="btn-option w-full mt-2 text-center" onclick="twPlayReset()">↺ Reset</button>
         </div>
         <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 fade-in">
@@ -3127,21 +3127,28 @@
       twPlayUpdate();
     };
     window.twPlayUpdate = function() {
-      const tag = document.querySelector('#section-twplay .btn-option.active')?.textContent || 'div';
-      const classesRaw = document.getElementById('twPlayInput')?.value || '';
-      const contentRaw = document.getElementById('twPlayContent')?.value || '';
+      const raw = document.getElementById('twPlayInput')?.value || '';
       const preview = document.getElementById('twPlayPreview');
       const code = document.getElementById('twPlayCode');
       if (!preview || !code) return;
-      const classLines = classesRaw.split('\n').filter(Boolean);
+
+      // HTML mode — like play.tailwindcss.com
+      if (raw.includes('<') || raw.includes('&')) {
+        preview.innerHTML = raw;
+        code.textContent = raw;
+        return;
+      }
+
+      // Legacy class-list mode (one element per line)
+      const tag = document.querySelector('#section-twplay .btn-option.active')?.textContent || 'div';
+      const contentRaw = document.getElementById('twPlayContent')?.value || '';
+      const classLines = raw.split('\n').filter(Boolean);
       const contentLines = contentRaw.split('\n');
       preview.innerHTML = '';
       let codeHtml = '';
-      let anyImg = false;
       classLines.forEach((cls, i) => {
         const el = document.createElement(tag === 'img' ? 'div' : tag);
         if (tag === 'img') {
-          anyImg = true;
           el.className = cls + ' w-24 h-24 object-cover rounded-xl transition-all duration-200';
           el.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
           el.title = 'img placeholder';
@@ -3153,16 +3160,14 @@
         codeHtml += `<${tag} class="${escapeHtml(cls)}">${escapeHtml(contentLines[i] || contentLines[0] || '')}</${tag}>\n`;
       });
       if (classLines.length === 0) {
-        preview.textContent = 'Type classes above to see a preview';
-        preview.className = 'text-sm text-slate-500';
+        preview.textContent = 'Type HTML above to see a preview';
         code.textContent = '<!-- nothing to preview -->';
         return;
       }
       code.textContent = codeHtml.trim();
-      // ponytail: single-element hotpath keeps original px-container outer style
     };
     window.twPlayReset = function() {
-      document.getElementById('twPlayInput').value = 'bg-blue-500 text-white p-4 rounded-xl shadow-lg';
+      document.getElementById('twPlayInput').value = '<div class="bg-blue-500 text-white p-4 rounded-xl shadow-lg">Hello Tailwind!</div>';
       document.getElementById('twPlayContent').value = 'Hello Tailwind!';
       document.querySelectorAll('#section-twplay .btn-option').forEach(b => b.classList.remove('active'));
       document.querySelector('#section-twplay .btn-option[onclick*="div"]')?.classList.add('active');
