@@ -3082,7 +3082,7 @@
             ).join('')}
           </div>
           <label class="text-xs text-slate-400 block mb-2">Content</label>
-          <input id="twPlayContent" type="text" value="Hello Tailwind!" class="w-full bg-slate-800 text-sm text-slate-200 rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none mb-4" oninput="twPlayUpdate()">
+          <textarea id="twPlayContent" rows="2" class="w-full bg-slate-800 text-sm text-slate-200 rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none mb-4" oninput="twPlayUpdate()">Hello Tailwind!</textarea>
           <label class="text-xs text-slate-400 block mb-2">Tailwind Classes</label>
           <textarea id="twPlayInput" rows="4" class="w-full bg-slate-800 text-sm text-emerald-300 font-mono rounded-lg px-3 py-2 border border-slate-700 focus:border-blue-500 outline-none resize-vertical" placeholder="e.g. bg-blue-500 text-white p-4 rounded-xl shadow-lg">bg-blue-500 text-white p-4 rounded-xl shadow-lg</textarea>
           <button class="btn-option w-full mt-2 text-center" onclick="twPlayReset()">↺ Reset</button>
@@ -3090,7 +3090,7 @@
         <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 fade-in">
           <label class="text-xs text-slate-400 block mb-2">Live Preview</label>
           <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 flex items-center justify-center" style="min-height:160px">
-            <div id="twPlayPreview" class="bg-blue-500 text-white p-4 rounded-xl shadow-lg transition-all duration-200">Hello Tailwind!</div>
+          <div id="twPlayPreview" class="flex flex-col gap-2 transition-all duration-200"><div class="bg-blue-500 text-white p-4 rounded-xl shadow-lg">Hello Tailwind!</div></div>
           </div>
           <div class="mt-3">
             <label class="text-xs text-slate-400 block mb-1">Generated Code</label>
@@ -3128,21 +3128,38 @@
     };
     window.twPlayUpdate = function() {
       const tag = document.querySelector('#section-twplay .btn-option.active')?.textContent || 'div';
-      const classes = document.getElementById('twPlayInput')?.value || '';
-      const content = document.getElementById('twPlayContent')?.value || '';
+      const classesRaw = document.getElementById('twPlayInput')?.value || '';
+      const contentRaw = document.getElementById('twPlayContent')?.value || '';
       const preview = document.getElementById('twPlayPreview');
       const code = document.getElementById('twPlayCode');
       if (!preview || !code) return;
-      preview.className = classes + ' transition-all duration-200';
-      if (tag === 'img') {
-        preview.innerHTML = '';
-        preview.className += ' w-24 h-24 object-cover rounded-xl';
-        preview.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
-        preview.title = 'img placeholder';
-      } else {
-        preview.textContent = content;
+      const classLines = classesRaw.split('\n').filter(Boolean);
+      const contentLines = contentRaw.split('\n');
+      preview.innerHTML = '';
+      let codeHtml = '';
+      let anyImg = false;
+      classLines.forEach((cls, i) => {
+        const el = document.createElement(tag === 'img' ? 'div' : tag);
+        if (tag === 'img') {
+          anyImg = true;
+          el.className = cls + ' w-24 h-24 object-cover rounded-xl transition-all duration-200';
+          el.style.background = 'linear-gradient(135deg,#667eea,#764ba2)';
+          el.title = 'img placeholder';
+        } else {
+          el.className = cls + ' transition-all duration-200';
+          el.textContent = contentLines[i] || contentLines[0] || '';
+        }
+        preview.appendChild(el);
+        codeHtml += `<${tag} class="${escapeHtml(cls)}">${escapeHtml(contentLines[i] || contentLines[0] || '')}</${tag}>\n`;
+      });
+      if (classLines.length === 0) {
+        preview.textContent = 'Type classes above to see a preview';
+        preview.className = 'text-sm text-slate-500';
+        code.textContent = '<!-- nothing to preview -->';
+        return;
       }
-      code.textContent = `<${tag} class="${classes}">${escapeHtml(content)}</${tag}>`;
+      code.textContent = codeHtml.trim();
+      // ponytail: single-element hotpath keeps original px-container outer style
     };
     window.twPlayReset = function() {
       document.getElementById('twPlayInput').value = 'bg-blue-500 text-white p-4 rounded-xl shadow-lg';
