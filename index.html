@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Tailwind CSS Playground</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } }
+    }
+  </script>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
@@ -87,6 +93,18 @@
     @media (max-width: 768px) {
       .sidebar-open #sidebar { transform: translateX(0); }
     }
+
+    /* Light mode overrides */
+    html:not(.dark) body { background: #f8fafc; color: #0f172a; }
+    html:not(.dark) .sidebar-link { color: #475569; }
+    html:not(.dark) .btn-option:not(.active) { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    html:not(.dark) .code-block { background: #1e293b; }
+    html:not(.dark) .bg-slate-800\/50 { background: #f1f5f9; }
+    html:not(.dark) .border-slate-700\/50 { border-color: #cbd5e1; }
+    html:not(.dark) .text-slate-400 { color: #64748b; }
+    html:not(.dark) .text-slate-100 { color: #0f172a; }
+    html:not(.dark) .bg-slate-900\/70 { background: #ffffff; }
+    html:not(.dark) .border-slate-700\/30 { border-color: #e2e8f0; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 antialiased">
@@ -94,9 +112,16 @@
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 shrink-0 border-r border-slate-700/50 bg-slate-900/95 backdrop-blur flex flex-col fixed md:sticky top-0 left-0 h-screen z-50 md:z-auto transition-transform duration-300 -translate-x-full md:translate-x-0">
       <div class="p-4 border-b border-slate-700/50">
-        <div class="flex items-center gap-2 mb-3">
-          <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          <h1 class="font-bold text-sm">Tailwind Playground</h1>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <h1 class="font-bold text-sm">Tailwind Playground</h1>
+          </div>
+          <div class="flex gap-1">
+            <button onclick="toggleTheme()" class="p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Toggle theme" aria-label="Toggle theme">
+              <span id="themeIcon" class="text-lg">🌙</span>
+            </button>
+          </div>
         </div>
         <div class="relative">
           <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -264,6 +289,20 @@
     // ===== STATE =====
     let currentCategory = null;
     let viewedCategories = new Set();
+    let themeMode = localStorage.getItem('theme') || 'dark';
+
+    function applyTheme() {
+      document.documentElement.classList.toggle('dark', themeMode === 'dark');
+      document.body.className = themeMode === 'dark'
+        ? 'bg-slate-900 text-slate-100 antialiased'
+        : 'bg-slate-50 text-slate-900 antialiased';
+      document.getElementById('themeIcon').textContent = themeMode === 'dark' ? '🌙' : '☀️';
+    }
+    function toggleTheme() {
+      themeMode = themeMode === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', themeMode);
+      applyTheme();
+    }
 
     // ===== SIDEBAR =====
     function toggleSidebar() {
@@ -2088,13 +2127,15 @@
       sec.style.display = 'none';
 
       let html = `<h2 class="text-2xl font-bold mb-1">Responsive Design</h2>
-      <p class="text-slate-400 text-sm mb-6">See how Tailwind's responsive prefixes <code class="text-sky-300">sm:</code>, <code class="text-sky-300">md:</code>, <code class="text-sky-300">lg:</code>, <code class="text-sky-300">xl:</code> work.</p>`;
+      <p class="text-slate-400 text-sm mb-6">See how Tailwind's responsive prefixes <code class="text-sky-300">sm:</code>, <code class="text-sky-300">md:</code>, <code class="text-sky-300">lg:</code>, <code class="text-sky-300">xl:</code> work.</p>
 
-      html += `<div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Breakpoint Preview</h3>
+        <p class="text-slate-400 text-sm mb-3">Resize the preview frame or click a breakpoint to see responsive behavior.</p>
         <div class="flex flex-wrap gap-2 mb-4">
-          <button class="btn-option" onclick="responsivePreview('mobile',this)">📱 Mobile (sm)</button>
-          <button class="btn-option active" onclick="responsivePreview('tablet',this)">📟 Tablet (md)</button>
-          <button class="btn-option" onclick="responsivePreview('desktop',this)">💻 Desktop (lg)</button>
+          <button class="btn-option" onclick="responsivePreview('mobile',this)">📱 Mobile (sm: 640px)</button>
+          <button class="btn-option active" onclick="responsivePreview('tablet',this)">📟 Tablet (md: 768px)</button>
+          <button class="btn-option" onclick="responsivePreview('desktop',this)">💻 Desktop (lg: 1024px)</button>
         </div>
         <div class="flex justify-center">
           <div id="responsiveFrame" class="responsive-frame bg-white" style="width:100%;max-width:768px;height:300px;">
@@ -2104,13 +2145,29 @@
                 <div class="bg-green-500 text-white rounded-lg p-4 text-center font-semibold text-sm">Card 2</div>
                 <div class="bg-purple-500 text-white rounded-lg p-4 text-center font-semibold text-sm">Card 3</div>
               </div>
-              <p class="text-xs text-slate-400 mt-3 text-center">Resize: 1 col (mobile) → 2 col (tablet) → 3 col (desktop)</p>
+              <p class="text-xs text-slate-400 mt-3 text-center">1 col (mobile) → 2 col (tablet) → 3 col (desktop)</p>
             </div>
           </div>
         </div>
-      </div>`;
+      </div>
 
-      html += `<div class="code-block relative mt-6">
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Responsive Layout</h3>
+        <p class="text-slate-400 text-sm mb-3">See how responsive classes interact.</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="responsive-layout-btns">
+          ${['1 col','2 col','3 col','responsive'].map((s,i) => `<button class="btn-option text-xs ${i===3?'active':''}" onclick="responsiveLayout('${s}')">${s}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div id="responsiveLayoutDemo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mx-auto max-w-sm">
+            <div class="bg-blue-500/30 rounded p-2 text-xs text-blue-300 text-center">Item</div>
+            <div class="bg-green-500/30 rounded p-2 text-xs text-green-300 text-center">Item</div>
+            <div class="bg-purple-500/30 rounded p-2 text-xs text-purple-300 text-center">Item</div>
+          </div>
+        </div>
+        <p id="responsiveLayoutNote" class="text-xs text-slate-500 mt-2">grid-cols-1 sm:grid-cols-2 md:grid-cols-3 — adapts at each breakpoint</p>
+      </div>
+
+      <div class="code-block relative mt-6">
         <div class="flex border-b border-slate-800">
           <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
           <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
@@ -2128,20 +2185,34 @@
       const frame = document.getElementById('responsiveFrame');
       if (!frame) return;
       const sizes = {
-        mobile: { width: '375px', maxWidth: '375px', label: 'sm: 640px' },
-        tablet: { width: '100%', maxWidth: '768px', label: 'md: 768px' },
-        desktop: { width: '100%', maxWidth: '1024px', label: 'lg: 1024px' }
+        mobile: { width: '375px', maxWidth: '375px' },
+        tablet: { width: '100%', maxWidth: '768px' },
+        desktop: { width: '100%', maxWidth: '1024px' }
       };
       const s = sizes[size];
       frame.style.width = s.width;
       frame.style.maxWidth = s.maxWidth;
-
-      // Update button active state — use explicit btn reference
       if (btn) {
         const container = btn.parentElement;
         container.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       }
+    };
+
+    window.responsiveLayout = function(layout) {
+      const demo = document.getElementById('responsiveLayoutDemo');
+      const note = document.getElementById('responsiveLayoutNote');
+      if (!demo) return;
+      const cont = document.getElementById('responsive-layout-btns');
+      if (cont) { cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active')); cont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === layout) b.classList.add('active'); }); }
+      const layouts = {
+        '1 col': { cls: 'grid grid-cols-1 gap-2 mx-auto max-w-sm', note: 'grid-cols-1 — always single column' },
+        '2 col': { cls: 'grid grid-cols-2 gap-2 mx-auto max-w-sm', note: 'grid-cols-2 — always two columns' },
+        '3 col': { cls: 'grid grid-cols-3 gap-2 mx-auto max-w-sm', note: 'grid-cols-3 — always three columns' },
+        'responsive': { cls: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mx-auto max-w-sm', note: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 — adapts at each breakpoint' }
+      };
+      const l = layouts[layout];
+      if (l) { demo.className = l.cls + ' [&>div]:rounded [&>div]:p-2 [&>div]:text-xs [&>div]:text-center'; if (note) note.textContent = l.note; }
     };
 
     // ===== Z-INDEX =====
@@ -2152,22 +2223,34 @@
       sec.style.display = 'none';
 
       let html = `<h2 class="text-2xl font-bold mb-1">Z-Index</h2>
-      <p class="text-slate-400 text-sm mb-6">Control stacking order with <code class="text-sky-300">z-{value}</code></p>`;
+      <p class="text-slate-400 text-sm mb-6">Control stacking order with <code class="text-sky-300">z-{value}</code>. Click a button to change which box stacks on top.</p>
 
-      html += `<div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
-        <p class="text-slate-400 text-sm mb-4">Click a button to change which box is on top.</p>
-        <div class="flex flex-wrap gap-2 mb-4">
-          ${['z-10','z-20','z-30','z-40','z-50'].map((s,i) =>
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Stacking Order</h3>
+        <p class="text-slate-400 text-sm mb-4">The <span class="text-blue-400 font-semibold">blue</span> box's z-index changes when you click a button. Higher values stack on top.</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="zindex-btns">
+          ${['z-0','z-10','z-20','z-30','z-40','z-50'].map((s,i) =>
             `<button class="btn-option ${i===2?'active':''}" onclick="zIndexDemo('${s}')">${s}</button>`
           ).join('')}
         </div>
         <div class="bg-slate-900/70 rounded-lg p-8 border border-slate-700/30 flex justify-center" style="min-height:200px">
           <div class="relative w-48 h-40">
-            <div class="absolute w-28 h-28 bg-blue-500 rounded-xl flex items-center justify-center text-white font-bold -left-4 top-0 z-10 shadow-lg">z-10</div>
-            <div class="absolute w-28 h-28 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold left-6 top-6 z-20 shadow-lg">z-20</div>
-            <div class="absolute w-28 h-28 bg-purple-500 rounded-xl flex items-center justify-center text-white font-bold left-14 top-12 z-30 shadow-lg">z-30</div>
+            <div class="absolute w-24 h-24 bg-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-sm -left-4 top-0 z-10 shadow-lg transition-all duration-300" id="zBox1">z-10</div>
+            <div class="absolute w-24 h-24 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold text-sm left-6 top-6 z-20 shadow-lg">z-20</div>
+            <div class="absolute w-24 h-24 bg-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-sm left-14 top-12 z-30 shadow-lg">z-30</div>
           </div>
         </div>
+        <p id="zIndexNote" class="text-xs text-slate-500 mt-3">Blue box: z-10 — beneath both green and purple</p>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="zindexCodeTw" class="text-emerald-300">z-10</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="zindexCodeCss" class="text-amber-300">z-index: 10;</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
       </div>`;
 
       sec.innerHTML = html;
@@ -2175,20 +2258,22 @@
     }
 
     window.zIndexDemo = function(z) {
-      const val = parseInt(z.replace('z-',''));
-      const boxes = document.querySelectorAll('.section-card:last-of-type .absolute:not(.pos-label)');
-      const btnContainer = document.querySelector('#section-zIndex .section-card');
-      if (btnContainer) {
-        btnContainer.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
-        btnContainer.querySelectorAll('.btn-option').forEach(b => {
-          if (b.textContent.trim().includes(z)) b.classList.add('active');
-        });
+      const box = document.getElementById('zBox1');
+      const note = document.getElementById('zIndexNote');
+      if (!box) return;
+      box.className = box.className.replace(/z-\d+/g, '').replace(/\s+/g,' ').trim();
+      box.classList.add(z);
+      box.textContent = z;
+      const btnCont = document.getElementById('zindex-btns');
+      if (btnCont) {
+        btnCont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
+        btnCont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === z) b.classList.add('active'); });
       }
-      boxes.forEach((box, i) => {
-        const base = [10, 20, 30][i];
-        box.className = box.className.replace(/z-\d+/g, '');
-        box.classList.add(base <= val ? z : `z-${base}`);
-      });
+      const val = parseInt(z.replace('z-',''));
+      const notes = {0:'beneath everything',10:'beneath green (z-20) and purple (z-30)',20:'above green (z-20), beneath purple (z-30)',30:'above green (z-20), same as purple (z-30)',40:'above green and purple',50:'on top of everything'};
+      if (note) note.textContent = `Blue box: ${z} — ${notes[val] || 'custom stacking order'}`;
+      document.getElementById('zindexCodeTw').textContent = z;
+      document.getElementById('zindexCodeCss').textContent = `z-index: ${val};`;
     };
 
     // ===== SIZING =====
@@ -2199,29 +2284,50 @@
       sec.style.display = 'none';
 
       let html = `<h2 class="text-2xl font-bold mb-1">Sizing</h2>
-      <p class="text-slate-400 text-sm mb-6">Min-width, max-width, min-height, max-height utilities.</p>`;
+      <p class="text-slate-400 text-sm mb-6">Min-width, max-width, min-height, max-height utilities with live preview.</p>
 
-      html += `<div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
-        <h3 class="text-lg font-semibold mb-3">Min/Max Width & Height</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Min/Max Width</h3>
+        <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label class="text-xs text-slate-400 block mb-2">Min-Width</label>
-            <div class="flex flex-wrap gap-1">${['min-w-0','min-w-20','min-w-40','min-w-full'].map(s => `<button class="btn-option text-xs" onclick="sizingDemo(this,'minw','${s}')">${s}</button>`).join('')}</div>
+            <div class="flex flex-wrap gap-1" id="sizing-minw-btns">${['min-w-0','min-w-20','min-w-40','min-w-full'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="sizingDemo(this,'minw','${s}')">${s}</button>`).join('')}</div>
           </div>
           <div>
             <label class="text-xs text-slate-400 block mb-2">Max-Width</label>
-            <div class="flex flex-wrap gap-1">${['max-w-none','max-w-xs','max-w-sm','max-w-md','max-w-lg'].map(s => `<button class="btn-option text-xs" onclick="sizingDemo(this,'maxw','${s}')">${s}</button>`).join('')}</div>
+            <div class="flex flex-wrap gap-1" id="sizing-maxw-btns">${['max-w-none','max-w-xs','max-w-sm','max-w-md','max-w-lg'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="sizingDemo(this,'maxw','${s}')">${s}</button>`).join('')}</div>
           </div>
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div class="mx-auto bg-emerald-500/20 border border-emerald-500/50 rounded p-2 text-[10px] text-emerald-300 text-center overflow-hidden transition-all duration-300 min-w-40" id="sizingWidthBox" style="width:auto">min-w-40</div>
+        </div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Min/Max Height</h3>
+        <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label class="text-xs text-slate-400 block mb-2">Min-Height</label>
-            <div class="flex flex-wrap gap-1">${['min-h-0','min-h-12','min-h-24','min-h-full'].map(s => `<button class="btn-option text-xs" onclick="sizingDemo(this,'minh','${s}')">${s}</button>`).join('')}</div>
+            <div class="flex flex-wrap gap-1" id="sizing-minh-btns">${['min-h-0','min-h-12','min-h-24','min-h-full'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="sizingDemo(this,'minh','${s}')">${s}</button>`).join('')}</div>
           </div>
           <div>
             <label class="text-xs text-slate-400 block mb-2">Max-Height</label>
-            <div class="flex flex-wrap gap-1">${['max-h-none','max-h-16','max-h-32','max-h-48'].map(s => `<button class="btn-option text-xs" onclick="sizingDemo(this,'maxh','${s}')">${s}</button>`).join('')}</div>
+            <div class="flex flex-wrap gap-1" id="sizing-maxis-btns">${['max-h-none','max-h-16','max-h-32','max-h-48'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="sizingDemo(this,'maxh','${s}')">${s}</button>`).join('')}</div>
           </div>
         </div>
-        <div id="sizingOutput" class="text-xs text-slate-500 mt-3 text-center"></div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 flex items-start justify-center" style="min-height:120px">
+          <div class="w-24 bg-violet-500/20 border border-violet-500/50 rounded flex items-center justify-center text-[10px] text-violet-300 overflow-hidden transition-all duration-300 min-h-24" id="sizingHeightBox">min-h-24</div>
+        </div>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="sizingCodeTw" class="text-emerald-300">min-w-40</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="sizingCodeCss" class="text-amber-300">min-width: 10rem;</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
       </div>`;
 
       sec.innerHTML = html;
@@ -2229,13 +2335,29 @@
     }
 
     window.sizingDemo = function(btn, type, cls) {
-      // Mark active button
       const container = btn.closest('.section-card');
       container.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      // Show class name
-      const output = document.getElementById('sizingOutput');
-      if (output) output.textContent = `Selected: ${cls}`;
+      const widthBox = document.getElementById('sizingWidthBox');
+      const heightBox = document.getElementById('sizingHeightBox');
+      const twCode = document.getElementById('sizingCodeTw');
+      const cssCode = document.getElementById('sizingCodeCss');
+      if (['minw','maxw'].includes(type) && widthBox) {
+        widthBox.className = widthBox.className.replace(/min-w-\\S+|max-w-\\S+/g, '').replace(/\\s+/g,' ').trim() + ' ' + cls + ' bg-emerald-500/20 border border-emerald-500/50 rounded p-2 text-[10px] text-emerald-300 text-center overflow-hidden transition-all duration-300';
+        widthBox.style.width = cls.startsWith('min-w-') ? 'auto' : '';
+        widthBox.textContent = cls;
+        if (twCode) twCode.textContent = cls;
+        if (cssCode) cssCode.textContent = cls.startsWith('min-w') ? `min-width: ${cls.replace('min-w-','')*0.25}rem;` : cls === 'max-w-none' ? 'max-width: none;' : `max-width: ${['xs','sm','md','lg'].indexOf(cls.replace('max-w-','')) > -1 ? ['20rem','24rem','28rem','32rem'][['xs','sm','md','lg'].indexOf(cls.replace('max-w-',''))] : cls.replace('max-w-','')*0.25+'rem'};`;
+      }
+      if (['minh','maxh'].includes(type) && heightBox) {
+        heightBox.className = heightBox.className.replace(/min-h-\\S+|max-h-\\S+/g, '').replace(/\\s+/g,' ').trim() + ' ' + cls + ' w-24 bg-violet-500/20 border border-violet-500/50 rounded flex items-center justify-center text-[10px] text-violet-300 overflow-hidden transition-all duration-300';
+        heightBox.textContent = cls;
+        if (twCode && !['minw','maxw'].includes(type)) twCode.textContent = cls;
+        if (cssCode && !['minw','maxw'].includes(type)) {
+          if (cls.startsWith('min-h')) cssCode.textContent = `min-height: ${cls.replace('min-h-','')*0.25}rem;`;
+          else cssCode.textContent = cls === 'max-h-none' ? 'max-height: none;' : `max-height: ${cls.replace('max-h-','')*0.25}rem;`;
+        }
+      }
     };
 
     // ===== SPACING PLAYGROUND =====
@@ -2525,6 +2647,10 @@
 {"id": "notif", "title": "Notification Bell", "variants": {"icon": {"c": "relative inline-flex shrink-0", "d": "relative inline-flex", "h": "<svg class=\"w-6 h-6 text-slate-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\"/></svg><span class=\"absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center\">3</span>"}, "with-text": {"c": "relative inline-flex items-center gap-2 shrink-0", "d": "relative inline-flex items-center gap-2", "h": "<svg class=\"w-5 h-5 text-slate-400\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9\"/></svg><span class=\"text-xs text-slate-400\">Notifications</span><span class=\"w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center\">12</span>"}}},
 {"id": "steps", "title": "Steps", "variants": {"numbers": {"c": "flex items-center", "d": "flex items-center", "h": "<div class=\"flex items-center\"><div class=\"w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center\">1</div><div class=\"w-10 h-0.5 bg-blue-600\"></div><div class=\"w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center\">2</div><div class=\"w-10 h-0.5 bg-slate-700\"></div><div class=\"w-8 h-8 rounded-full bg-slate-700 text-slate-400 text-xs font-bold flex items-center justify-center\">3</div></div>"}, "vertical": {"c": "space-y-0", "d": "space-y-0", "h": "<div class=\"flex items-center gap-3\"><div class=\"w-7 h-7 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"/></svg></div><span class=\"text-xs text-white font-medium\">Account Created</span></div><div class=\"ml-3.5 pl-3.5 border-l border-blue-600/50 py-2\"><div class=\"flex items-center gap-3\"><div class=\"w-7 h-7 rounded-full bg-blue-600/50 text-white text-[10px] font-bold flex items-center justify-center shrink-0\">2</div><span class=\"text-xs text-slate-300\">Profile Setup</span></div></div><div class=\"ml-3.5 pl-3.5 border-l border-slate-700\"><div class=\"flex items-center gap-3\"><div class=\"w-7 h-7 rounded-full bg-slate-700 text-slate-500 text-[10px] font-bold flex items-center justify-center shrink-0\">3</div><span class=\"text-xs text-slate-500\">Billing</span></div></div>"}}},
 {"id": "simple-table", "title": "Table", "variants": {"striped": {"c": "w-full text-left border-collapse", "d": "w-full text-left", "h": "<table class=\"w-full text-xs\"><thead><tr class=\"border-b border-slate-700\"><th class=\"py-2 px-3 text-slate-400 font-medium\">Name</th><th class=\"py-2 px-3 text-slate-400 font-medium\">Role</th><th class=\"py-2 px-3 text-slate-400 font-medium\">Status</th></tr></thead><tbody class=\"divide-y divide-slate-700/50\"><tr class=\"bg-slate-800/30\"><td class=\"py-2 px-3 text-white\">Alice</td><td class=\"py-2 px-3 text-slate-400\">Admin</td><td class=\"py-2 px-3\"><span class=\"text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full text-[10px]\">Active</span></td></tr><tr><td class=\"py-2 px-3 text-white\">Bob</td><td class=\"py-2 px-3 text-slate-400\">Editor</td><td class=\"py-2 px-3\"><span class=\"text-yellow-400 bg-yellow-500/10 px-2 py-0.5 rounded-full text-[10px]\">Pending</span></td></tr><tr class=\"bg-slate-800/30\"><td class=\"py-2 px-3 text-white\">Carol</td><td class=\"py-2 px-3 text-slate-400\">Viewer</td><td class=\"py-2 px-3\"><span class=\"text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full text-[10px]\">Active</span></td></tr></tbody></table>"}, "bordered": {"c": "w-full text-left border-collapse", "d": "w-full text-left", "h": "<table class=\"w-full text-xs\"><thead><tr class=\"border border-slate-700\"><th class=\"py-2 px-3 text-slate-400 font-medium border-r border-slate-700\">Name</th><th class=\"py-2 px-3 text-slate-400 font-medium border-r border-slate-700\">Role</th><th class=\"py-2 px-3 text-slate-400 font-medium\">Status</th></tr></thead><tbody><tr class=\"border border-slate-700\"><td class=\"py-2 px-3 text-white border-r border-slate-700\">Alice</td><td class=\"py-2 px-3 text-slate-400 border-r border-slate-700\">Admin</td><td class=\"py-2 px-3\"><span class=\"text-green-400 text-[10px]\">Active</span></td></tr><tr class=\"border border-slate-700\"><td class=\"py-2 px-3 text-white border-r border-slate-700\">Bob</td><td class=\"py-2 px-3 text-slate-400 border-r border-slate-700\">Editor</td><td class=\"py-2 px-3\"><span class=\"text-yellow-400 text-[10px]\">Pending</span></td></tr></tbody></table>"}}},
+      {id:"comment",title:"Comment Thread",variants:{simple:{c:"flex gap-3 p-4 bg-slate-800/30 rounded-lg",d:"flex gap-3 p-4 rounded-lg bg-slate-800/30",h:'<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div><div class="flex-1 min-w-0"><div class="flex items-baseline gap-2 flex-wrap"><span class="text-sm font-medium text-white">Alex</span><span class="text-[10px] text-slate-500">2h ago</span></div><p class="text-xs text-slate-400 mt-1">Great work! This looks amazing.</p></div>'},reply:{c:"flex gap-3 p-4 bg-slate-800/30 rounded-lg max-w-md",d:"flex gap-3 p-4 rounded-lg bg-slate-800/30",h:'<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0">A</div><div class="flex-1 min-w-0"><div class="flex items-baseline gap-2 flex-wrap"><span class="text-sm font-medium text-white">Alex</span><span class="text-[10px] text-slate-500">2h ago</span></div><p class="text-xs text-slate-400 mt-1">Great work!</p><div class="mt-2 pl-3 border-l-2 border-slate-700"><div class="flex items-center gap-2 mb-1.5"><div class="w-5 h-5 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-white text-[8px] font-bold">T</div><span class="text-xs font-medium text-slate-300">Taylor</span><span class="text-[10px] text-slate-600">1h ago</span></div><p class="text-xs text-slate-500">Thanks Alex!</p></div></div>'},highlighted:{c:"flex gap-3 p-4 bg-blue-600/10 rounded-lg border border-blue-500/20",d:"flex gap-3 p-4 rounded-lg border bg-blue-600/10",h:'<div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center text-white text-xs font-bold shrink-0">M</div><div class="flex-1 min-w-0"><div class="flex items-baseline gap-2"><span class="text-sm font-medium text-white">Mentor</span><span class="text-[10px] text-blue-400">Pinned</span></div><p class="text-xs text-slate-300 mt-1">Check the docs for more examples!</p></div>'}}},
+      {id:"banner",title:"Announcement Banner",variants:{info:{c:"flex items-center gap-3 bg-blue-600/15 border border-blue-500/30 rounded-lg px-4 py-3",d:"flex items-center gap-3 rounded-lg px-4 py-3 bg-blue-600/15",h:'<svg class="w-5 h-5 text-blue-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-xs text-blue-200 flex-1">New update. <a class="text-blue-300 underline">Learn more</a></span><button class="text-blue-400/60 hover:text-blue-300">&times;</button>'},success:{c:"flex items-center gap-3 bg-green-600/15 border border-green-500/30 rounded-lg px-4 py-3",d:"flex items-center gap-3 rounded-lg px-4 py-3 bg-green-600/15",h:'<svg class="w-5 h-5 text-green-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-xs text-green-200 flex-1">Saved successfully.</span><button class="text-green-400/60 hover:text-green-300">&times;</button>'},warning:{c:"flex items-center gap-3 bg-yellow-600/15 border border-yellow-500/30 rounded-lg px-4 py-3",d:"flex items-center gap-3 rounded-lg px-4 py-3 bg-yellow-600/15",h:'<svg class="w-5 h-5 text-yellow-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg><span class="text-xs text-yellow-200 flex-1">Are you sure?</span><div class="flex gap-2"><button class="text-[10px] bg-yellow-600/30 text-yellow-200 px-2 py-0.5 rounded">Cancel</button><button class="text-[10px] bg-red-600/30 text-red-200 px-2 py-0.5 rounded">Delete</button></div>'}}},
+      {id:"faq",title:"FAQ",variants:{simple:{c:"space-y-2",d:"space-y-2",h:'<details class="bg-slate-800/30 rounded-lg border border-slate-700/50 group"><summary class="px-4 py-3 text-sm text-slate-200 font-medium cursor-pointer flex items-center justify-between">How to start?<svg class="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></summary><div class="px-4 pb-3 text-xs text-slate-400">Install via npm and start using utility classes.</div></details><details class="bg-slate-800/30 rounded-lg border border-slate-700/50 group"><summary class="px-4 py-3 text-sm text-slate-200 font-medium cursor-pointer flex items-center justify-between">Is it free?<svg class="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></summary><div class="px-4 pb-3 text-xs text-slate-400">Yes, completely free and open source.</div></details>'},card:{c:"space-y-3",d:"space-y-3",h:'<div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50"><h4 class="text-sm font-medium text-white mb-1">What is Tailwind CSS?</h4><p class="text-xs text-slate-400">A utility-first CSS framework.</p></div><div class="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50"><h4 class="text-sm font-medium text-white mb-1">React compatible?</h4><p class="text-xs text-slate-400">Works with React, Vue, Angular, and more.</p></div>'}}},
+      {id:"timeline",title:"Timeline",variants:{dot:{c:"space-y-0",d:"space-y-0",h:'<div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-blue-500 ring-2 ring-slate-800"></div><div class="w-0.5 flex-1 bg-slate-700 mt-1"></div></div><div class="pb-6"><div class="text-sm font-medium text-white">Started</div><div class="text-xs text-slate-500">Mar 2026</div><div class="text-xs text-slate-400">Planning phase.</div></div></div><div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-green-500 ring-2 ring-slate-800"></div><div class="w-0.5 flex-1 bg-slate-700 mt-1"></div></div><div class="pb-6"><div class="text-sm font-medium text-white">Alpha</div><div class="text-xs text-slate-500">Jun 2026</div><div class="text-xs text-slate-400">Testing phase.</div></div></div><div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-3 h-3 rounded-full bg-purple-500 ring-2 ring-slate-800"></div></div><div class="pb-0"><div class="text-sm font-medium text-white">Launch</div><div class="text-xs text-slate-500">Q3 2026</div><div class="text-xs text-slate-400">Available.</div></div></div>'},icon:{c:"space-y-0",d:"space-y-0",h:'<div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-blue-600/20 flex items-center justify-center"><svg class="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div><div class="w-0.5 flex-1 bg-slate-700"></div></div><div class="pb-6"><div class="text-sm font-medium text-white">Task</div><div class="text-xs text-slate-400">Mockups ready</div></div></div><div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-green-600/20 flex items-center justify-center"><svg class="w-3.5 h-3.5 text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div><div class="w-0.5 flex-1 bg-slate-700"></div></div><div class="pb-6"><div class="text-sm font-medium text-white">Review</div><div class="text-xs text-slate-400">Approved</div></div></div><div class="flex gap-3"><div class="flex flex-col items-center"><div class="w-7 h-7 rounded-full bg-amber-600/20 flex items-center justify-center"><svg class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div></div><div class="pb-0"><div class="text-sm font-medium text-white">Live</div><div class="text-xs text-slate-400">Production</div></div></div>'}}},
     ];
 
     function buildComponents() {
@@ -2592,79 +2718,352 @@
     function buildRing() {
       const sec = document.createElement('div');
       sec.id = 'section-ring'; sec.className = 'category-section'; sec.style.display = 'none';
-      const preview = id => livePreview(`<div id="${id}" class="p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400">Hover / focus me</div>`, '');
-      const code = cls => `<span class="text-xs font-mono text-emerald-300">${cls}</span>`;
-      sec.innerHTML = '<h2 class="text-2xl font-bold mb-1">○ Ring</h2><p class="text-slate-400 text-sm mb-6">Ring utilities add outline-like rings with box-shadow. Commonly used for focus indicators.</p>'
-        + sc('Ring Width', 'ring-0, ring-1, ring-2, ring-4, ring-8', preview('ringDemo1') + '<div class="flex flex-wrap gap-3 mt-3">' + ['ring-0','ring-1','ring-2','ring-4','ring-8'].map(c => `<button class="btn-option text-xs" onmouseenter="document.getElementById('ringDemo1').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400 ${c}'" onmouseleave="document.getElementById('ringDemo1').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400'">${c}</button>`).join('') + '</div>')
-        + sc('Ring Color', 'ring-blue-500, ring-purple-500, etc.', preview('ringDemo2') + '<div class="flex flex-wrap gap-2 mt-3">' + ['ring-blue-500','ring-green-500','ring-purple-500','ring-pink-500','ring-amber-500','ring-red-500'].map(c => `<button class="btn-option text-xs" onmouseenter="document.getElementById('ringDemo2').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400 ring-2 ${c}'" onmouseleave="document.getElementById('ringDemo2').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400'">${c}</button>`).join('') + '</div>')
-        + sc('Ring Offset', 'ring-offset-0, ring-offset-2, ring-offset-4, ring-offset-8', preview('ringDemo3') + '<div class="flex flex-wrap gap-2 mt-3">' + ['ring-offset-0','ring-offset-2','ring-offset-4','ring-offset-8'].map(c => `<button class="btn-option text-xs" onmouseenter="document.getElementById('ringDemo3').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400 ring-2 ring-blue-500 ${c}'" onmouseleave="document.getElementById('ringDemo3').className='p-6 bg-slate-800 rounded-lg flex items-center justify-center text-sm text-slate-400'">${c}</button>`).join('') + '</div>')
-        + sc('Ring Inset', 'ring-inset makes ring render inside the element', livePreview('<div class="p-6 bg-slate-800 rounded-lg ring-2 ring-blue-500 ring-inset flex items-center justify-center text-sm text-slate-400">Ring appears inside</div>', ''));
-      // ponytail: live code displays update on hover via MutationObserver
-      sec.querySelectorAll('.preview-box').forEach(box => {
-        const inner = box.querySelector('[id]');
-        if (!inner) return;
-        const code = box.parentElement.querySelector('[data-code]');
-        if (code?.hasAttribute('data-code')) {
-          code.textContent = inner.className.replace(/\s+/g,' ').trim();
-          new MutationObserver(() => { code.textContent = inner.className.replace(/\s+/g,' ').trim(); })
-            .observe(inner, { attributes: true, attributeFilter: ['class'] });
-        }
-      });
+      sec.innerHTML = `<h2 class="text-2xl font-bold mb-1">○ Ring</h2>
+      <p class="text-slate-400 text-sm mb-6">Ring utilities add outline-like rings with box-shadow. Commonly used for focus indicators.</p>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Ring Width</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">ring-{size}</code> to control the ring width.</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="ring-width-btns">
+          ${['ring-0','ring-1','ring-2','ring-4','ring-8'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="ringUpdate('width','${s}')">${s}</button>`).join('')}
+        </div>
+        <div data-preview class="preview-box bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 ring-2 ring-blue-500 flex items-center justify-center text-sm text-slate-400" id="ringWidthDemo">ring-2 ring-blue-500</div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Ring Color</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">ring-{color}-{shade}</code></p>
+        <div class="flex flex-wrap gap-2 mb-4" id="ring-color-btns">
+          ${['ring-blue-500','ring-green-500','ring-purple-500','ring-pink-500','ring-amber-500','ring-red-500'].map((s,i) => `<button class="btn-option text-xs ${i===0?'active':''}" onclick="ringUpdate('color','${s}')">${s}</button>`).join('')}
+        </div>
+        <div data-preview class="preview-box bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 ring-2 ring-blue-500 flex items-center justify-center text-sm text-slate-400">ring-2 ring-blue-500</div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Ring Offset</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">ring-offset-{size}</code> to add space between ring and element.</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="ring-offset-btns">
+          ${['ring-offset-0','ring-offset-1','ring-offset-2','ring-offset-4','ring-offset-8'].map((s,i) => `<button class="btn-option text-xs ${i===0?'active':''}" onclick="ringUpdate('offset','${s}')">${s}</button>`).join('')}
+        </div>
+        <div class="bg-slate-800 rounded-lg p-4 border border-slate-700/30 flex items-center justify-center" style="min-height:100px">
+          <div data-preview class="w-40 h-16 bg-slate-700 rounded-lg flex items-center justify-center text-xs text-slate-400 ring-2 ring-blue-500 ring-offset-0 ring-offset-slate-800 transition-all duration-300">ring-2 ring-blue-500</div>
+        </div>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="ringCodeTw" class="text-emerald-300">ring-2 ring-blue-500</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="ringCodeCss" class="text-amber-300">box-shadow: 0 0 0 2px #3b82f6;</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>`;
+      sec.innerHTML = sec.innerHTML;
       return sec;
     }
+
+    const ringState = { width: 'ring-2', color: 'ring-blue-500', offset: 'ring-offset-0' };
+    window.ringUpdate = function(prop, value) {
+      ringState[prop] = value;
+      const cont = document.getElementById('ring-'+prop+'-btns');
+      if (cont) {
+        cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active'));
+        cont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === value) b.classList.add('active'); });
+      }
+      const sec = document.getElementById('section-ring');
+      const previews = sec.querySelectorAll('[data-preview]');
+      if (prop === 'width') {
+        previews.forEach(p => { p.className = p.className.replace(/ring-\d+/g, '').replace(/\\s+/g,' ').trim(); p.classList.add(value); });
+      } else if (prop === 'color') {
+        previews.forEach(p => { p.className = p.className.replace(/ring-\w+-\d+/g, '').replace(/\\s+/g,' ').trim(); p.classList.add(value); });
+      } else if (prop === 'offset') {
+        const offPreview = sec.querySelectorAll('.section-card')[2].querySelector('[data-preview]');
+        if (offPreview) { offPreview.className = offPreview.className.replace(/ring-offset-\w+/g, '').replace(/\\s+/g,' ').trim(); offPreview.classList.add(value); }
+      }
+      const tw = `ring-${ringState.width.replace('ring-','')} ${ringState.color}`;
+      const off = ringState.offset !== 'ring-offset-0' ? ' ' + ringState.offset : '';
+      document.getElementById('ringCodeTw').textContent = tw + off;
+      const r = ringState.width.replace('ring-','');
+      document.getElementById('ringCodeCss').textContent = `box-shadow: 0 0 0 ${r/4===1?'':r/4+'px'} ${r/4}px ${ringState.color.replace('ring-','')};\nborder-radius: 0.5rem;`;
+    };
     // ===== BACKDROP =====
     function buildBackdrop() {
       const sec = document.createElement('div');
       sec.id = 'section-backdrop'; sec.className = 'category-section'; sec.style.display = 'none';
-      const bg = '<div class="w-full h-40 rounded-lg bg-cover bg-center flex items-center justify-center" style="background-image:linear-gradient(45deg,#667eea,#764ba2)"><div class="[&>div]:mx-2 flex gap-4 flex-wrap justify-center">';
-      const blurDemo = (cls, label) => `<div class="${cls} bg-white/80 rounded-lg px-4 py-3 text-slate-800 text-sm font-medium">${label}</div>`;
-      sec.innerHTML = '<h2 class="text-2xl font-bold mb-1">◌ Backdrop Filter</h2><p class="text-slate-400 text-sm mb-6">Apply filters to the area behind an element. Essential for glassmorphism effects.</p>'
-        + sc('Backdrop Blur', 'backdrop-blur-sm, backdrop-blur, backdrop-blur-md, backdrop-blur-lg, backdrop-blur-xl', bg + ['backdrop-blur-sm','backdrop-blur','backdrop-blur-md','backdrop-blur-lg','backdrop-blur-xl'].map((c,i) => blurDemo(c, ['sm','','md','lg','xl'][i])).join('') + '</div></div>')
-        + sc('Backdrop Brightness', 'backdrop-brightness-50 through backdrop-brightness-200', bg + ['backdrop-brightness-50','backdrop-brightness-75','backdrop-brightness-100','backdrop-brightness-150','backdrop-brightness-200'].map(c => blurDemo(c, c.replace('backdrop-',''))).join('') + '</div></div>')
-        + sc('Backdrop Contrast / Grayscale', 'backdrop-contrast-*, backdrop-grayscale, backdrop-grayscale-0', bg + ['backdrop-contrast-50','backdrop-contrast-100','backdrop-contrast-150','backdrop-grayscale','backdrop-grayscale-0'].map(c => blurDemo(c, c.replace('backdrop-',''))).join('') + '</div></div>')
-        + sc('Glassmorphism Demo', 'Combine backdrop-blur + bg-white/10 + border-white/10', '<div class="flex items-center justify-center min-h-[160px] rounded-lg" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)"><div class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-8 py-6 text-center shadow-2xl"><p class="text-white text-lg font-bold">Glass Card</p><p class="text-white/70 text-sm mt-1">backdrop-blur-xl bg-white/10</p></div></div>')
-        + sc('Backdrop Saturate', 'backdrop-saturate-0 through backdrop-saturate-200', bg + ['backdrop-saturate-0','backdrop-saturate-50','backdrop-saturate-100','backdrop-saturate-150','backdrop-saturate-200'].map(c => blurDemo(c, c.replace('backdrop-',''))).join('') + '</div></div>');
+      sec.innerHTML = `<h2 class="text-2xl font-bold mb-1">◌ Backdrop Filter</h2>
+      <p class="text-slate-400 text-sm mb-6">Apply filters behind an element. Essential for glassmorphism. Click the buttons to see each effect on a gradient background.</p>
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Backdrop Blur</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">backdrop-blur-{size}</code></p>
+        <div class="flex flex-wrap gap-2 mb-4" id="backdrop-blur-btns">
+          ${['backdrop-blur-sm','backdrop-blur','backdrop-blur-md','backdrop-blur-lg','backdrop-blur-xl'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="backdropUpdate('blur','${s}')">${s.replace('backdrop-blur','').replace(/^-/,'')||'default'}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 flex items-center justify-center" style="min-height:120px;background:linear-gradient(135deg,#667eea,#764ba2)">
+          <div data-preview class="backdrop-blur-md bg-white/20 rounded-lg px-6 py-4 text-white text-sm font-medium text-center">backdrop-blur-md<br><span class="text-white/60 text-xs">Blurs the gradient behind this panel</span></div>
+        </div>
+      </div>
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Backdrop Brightness</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">backdrop-brightness-{value}</code></p>
+        <div class="flex flex-wrap gap-2 mb-4" id="backdrop-brightness-btns">
+          ${['backdrop-brightness-50','backdrop-brightness-75','backdrop-brightness-100','backdrop-brightness-150','backdrop-brightness-200'].map((s,i) => `<button class="btn-option text-xs ${i===2?'active':''}" onclick="backdropUpdate('brightness','${s}')">${s.replace('backdrop-brightness-','')}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 flex items-center justify-center" style="min-height:120px;background:linear-gradient(135deg,#667eea,#764ba2)">
+          <div data-preview class="backdrop-brightness-100 bg-white/20 rounded-lg px-6 py-4 text-white text-sm font-medium text-center">Brightness: 100%</div>
+        </div>
+      </div>
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Glassmorphism Demo</h3>
+        <p class="text-slate-400 text-sm mb-3">Combining <code class="text-sky-300">backdrop-blur-xl</code> + <code class="text-sky-300">bg-white/10</code> + <code class="text-sky-300">border-white/20</code></p>
+        <div class="flex items-center justify-center min-h-[160px] rounded-lg" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)">
+          <div data-preview class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-8 py-6 text-center shadow-2xl">
+            <p class="text-white text-lg font-bold">Glass Card</p>
+            <p class="text-white/70 text-sm mt-1">backdrop-blur-xl bg-white/10</p>
+          </div>
+        </div>
+      </div>
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="backdropCodeTw" class="text-emerald-300">backdrop-blur-md</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="backdropCodeCss" class="text-amber-300">backdrop-filter: blur(12px);</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>`;
       return sec;
     }
+    let backdropState = 'backdrop-blur-md';
+    window.backdropUpdate = function(type, value) {
+      backdropState = value;
+      const cont = document.getElementById('backdrop-'+type+'-btns');
+      if (cont) { cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active')); cont.querySelectorAll('.btn-option').forEach(b => { if (b.getAttribute('onclick')?.includes("'"+value+"'")) b.classList.add('active'); }); }
+      document.querySelectorAll('#section-backdrop [data-preview]').forEach(el => {
+        el.className = el.className.replace(/backdrop-\\S+/g, '').replace(/\\s+/g,' ').trim() + ' ' + value;
+      });
+      document.getElementById('backdropCodeTw').textContent = value;
+      document.getElementById('backdropCodeCss').textContent = `backdrop-filter: ${value.replace(/^backdrop-/,'').replace(/-/g,' ')}; /* approximate */`;
+    };
     // ===== DIVIDE & SPACE =====
     function buildDivide() {
       const sec = document.createElement('div');
       sec.id = 'section-divide'; sec.className = 'category-section'; sec.style.display = 'none';
-      sec.innerHTML = '<h2 class="text-2xl font-bold mb-1">↗ Divide & Space Between</h2><p class="text-slate-400 text-sm mb-6">Divide adds borders between child elements. Space controls gap between children.</p>'
-        + sc('Divide X', 'divide-x, divide-x-0, divide-x-2, divide-x-4, divide-x-8 — adds a border between horizontal children', '<div class="divide-x divide-slate-600 flex bg-slate-800/50 rounded-lg p-3"><div class="px-4 py-2 text-xs text-slate-300">Item 1</div><div class="px-4 py-2 text-xs text-slate-300">Item 2</div><div class="px-4 py-2 text-xs text-slate-300">Item 3</div></div>')
-        + sc('Divide Y', 'divide-y, divide-y-0, divide-y-2, divide-y-4 — adds a border between vertical children', '<div class="divide-y divide-slate-600 bg-slate-800/50 rounded-lg"><div class="px-4 py-3 text-xs text-slate-300">Row 1</div><div class="px-4 py-3 text-xs text-slate-300">Row 2</div><div class="px-4 py-3 text-xs text-slate-300">Row 3</div></div>')
-        + sc('Divide Color', 'divide-{color}-{shade} — e.g., divide-blue-500, divide-red-500', '<div class="divide-y [&>div]:px-4 [&>div]:py-2 [&>div]:text-xs divide-blue-500 bg-slate-800/50 rounded-lg"><div class="text-slate-300">Blue border</div><div class="text-slate-300">Between rows</div><div class="text-slate-300">divide-blue-500</div></div>')
-        + sc('Divide Style', 'divide-solid, divide-dashed, divide-dotted, divide-double, divide-none', '<div class="divide-y [&>div]:px-4 [&>div]:py-2 [&>div]:text-xs divide-slate-500 divide-dashed bg-slate-800/50 rounded-lg"><div class="text-slate-300">Dashed</div><div class="text-slate-300">divide-dashed</div><div class="text-slate-300">Style</div></div>')
-        + sc('Space Between X', 'space-x-0 through space-x-8 — adds margin between horizontal children', '<div class="flex [&>div]:bg-slate-700 [&>div]:rounded-lg [&>div]:px-3 [&>div]:py-2 [&>div]:text-xs [&>div]:text-slate-300 space-x-4"><div>A</div><div>B</div><div>C</div></div>')
-        + sc('Space Between Y', 'space-y-0 through space-y-8 — adds margin between vertical children', '<div class="[&>div]:bg-slate-700 [&>div]:rounded-lg [&>div]:px-3 [&>div]:py-2 [&>div]:text-xs [&>div]:text-slate-300 space-y-3"><div>Top</div><div>Middle</div><div>Bottom</div></div>')
-        + sc('Space Reverse', 'space-x-reverse, space-y-reverse — reverses direction for RTL', '<div class="flex [&>div]:bg-slate-700 [&>div]:rounded-lg [&>div]:px-3 [&>div]:py-2 [&>div]:text-xs [&>div]:text-slate-300 space-x-4 space-x-reverse"><div>Last</div><div>Middle</div><div>First</div></div>');
+      sec.innerHTML = `<h2 class="text-2xl font-bold mb-1">↗ Divide & Space Between</h2>
+      <p class="text-slate-400 text-sm mb-6">Divide adds borders between children. Space controls gaps between them.</p>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Divide X</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">divide-x-{size}</code> — adds borders between horizontal children</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="divide-x-btns">
+          ${['divide-x-0','divide-x','divide-x-2','divide-x-4','divide-x-8'].map((s,i) => `<button class="btn-option text-xs ${i===1?'active':''}" onclick="divideUpdate('x','${s}')">${s}</button>`).join('')}
+        </div>
+        <div data-preview class="divide-x divide-slate-600 flex bg-slate-800/50 rounded-lg p-3"><div class="px-4 py-2 text-xs text-slate-300">Item 1</div><div class="px-4 py-2 text-xs text-slate-300">Item 2</div><div class="px-4 py-2 text-xs text-slate-300">Item 3</div></div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Divide Y</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">divide-y-{size}</code> — adds borders between vertical children</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="divide-y-btns">
+          ${['divide-y-0','divide-y','divide-y-2','divide-y-4'].map((s,i) => `<button class="btn-option text-xs ${i===1?'active':''}" onclick="divideUpdate('y','${s}')">${s}</button>`).join('')}
+        </div>
+        <div data-preview class="divide-y divide-slate-600 bg-slate-800/50 rounded-lg"><div class="px-4 py-3 text-xs text-slate-300">Row 1</div><div class="px-4 py-3 text-xs text-slate-300">Row 2</div><div class="px-4 py-3 text-xs text-slate-300">Row 3</div></div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Divide Style</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">divide-{style}</code> — solid, dashed, dotted, double</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="divide-style-btns">
+          ${['divide-solid','divide-dashed','divide-dotted','divide-double'].map((s,i) => `<button class="btn-option text-xs ${i===0?'active':''}" onclick="divideUpdate('style','${s}')">${s.replace('divide-','')}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30"><div data-preview class="divide-y divide-slate-500 divide-solid [&>div]:px-4 [&>div]:py-2 [&>div]:text-xs [&>div]:text-slate-300 bg-slate-800/50 rounded-lg"><div>Style 1</div><div>Style 2</div><div>Style 3</div></div></div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Space Between X</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">space-x-{size}</code> — margin between horizontal flex children</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="divide-spacex-btns">
+          ${['space-x-0','space-x-1','space-x-2','space-x-4','space-x-8'].map((s,i) => `<button class="btn-option text-xs ${i===3?'active':''}" onclick="divideUpdate('spacex','${s}')">${s}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30"><div data-preview class="flex space-x-4 [&>div]:bg-slate-700 [&>div]:rounded-lg [&>div]:px-3 [&>div]:py-2 [&>div]:text-xs [&>div]:text-slate-300"><div>A</div><div>B</div><div>C</div></div></div>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="divideCodeTw" class="text-emerald-300">divide-x divide-slate-600</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="divideCodeCss" class="text-amber-300">${escapeHtml('display: flex;\nborder-right: 1px solid #475569;')}</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>`;
       return sec;
     }
+    const divideState = { x: 'divide-x', y: 'divide-y', style: 'divide-solid', spacex: 'space-x-4' };
+    window.divideUpdate = function(prop, value) {
+      divideState[prop] = value;
+      const cont = document.getElementById('divide-'+prop+'-btns');
+      if (cont) { cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active')); cont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === value) b.classList.add('active'); }); }
+      const sec = document.getElementById('section-divide');
+      if (prop === 'x') {
+        sec.querySelector('[data-preview]').className = sec.querySelector('[data-preview]').className.replace(/divide-x[\\S]*/g, '').replace(/\\s+/g,' ').trim() + ' ' + value + ' divide-slate-600 flex';
+      } else if (prop === 'y') {
+        const els = sec.querySelectorAll('[data-preview]');
+        els[1].className = els[1].className.replace(/divide-y[\\S]*/g, '').replace(/\\s+/g,' ').trim() + ' ' + value + ' divide-slate-600';
+      } else if (prop === 'style') {
+        const sEl = sec.querySelectorAll('.section-card')[2].querySelector('[data-preview]');
+        sEl.className = sEl.className.replace(/divide-(solid|dashed|dotted|double)/g, '').replace(/\\s+/g,' ').trim() + ' ' + value;
+      } else if (prop === 'spacex') {
+        const spEl = sec.querySelectorAll('.section-card')[3].querySelector('[data-preview]');
+        spEl.className = spEl.className.replace(/space-x-\\w+/g, '').replace(/\\s+/g,' ').trim() + ' ' + value + ' flex';
+      }
+      document.getElementById('divideCodeTw').textContent = value;
+    };
     // ===== ASPECT RATIO =====
     function buildAspectRatio() {
       const sec = document.createElement('div');
       sec.id = 'section-aspect'; sec.className = 'category-section'; sec.style.display = 'none';
-      sec.innerHTML = '<h2 class="text-2xl font-bold mb-1">▬ Aspect Ratio</h2><p class="text-slate-400 text-sm mb-6">Control the aspect ratio of elements. Perfect for images, videos, and embeds.</p>'
-        + sc('Aspect Auto', 'aspect-auto — default, no ratio enforced', '<div class="aspect-auto w-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-medium p-8">auto</div>')
-        + sc('Aspect Square', 'aspect-square — 1:1 ratio', '<div class="aspect-square w-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-medium">1:1</div>')
-        + sc('Aspect Video', 'aspect-video — 16:9 ratio', '<div class="aspect-video w-64 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-medium">16:9</div>')
-        + sc('Responsive Iframe Demo', 'aspect-video on an embed container', '<div class="aspect-video w-full max-w-lg rounded-lg overflow-hidden bg-slate-800 flex items-center justify-center text-slate-500 text-xs border border-slate-700"><span>Video placeholder — aspect-video maintains 16:9 ratio</span></div>')
-        + sc('Image With Aspect', 'Combine aspect ratio with object-cover for perfect image fitting', '<div class="aspect-square w-40 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center text-slate-500 text-xs border border-slate-700">Image placeholder<br>aspect-square</div>');
+      sec.innerHTML = `<h2 class="text-2xl font-bold mb-1">▬ Aspect Ratio</h2>
+      <p class="text-slate-400 text-sm mb-6">Control the aspect ratio of elements. Perfect for images, videos, and embeds.</p>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Aspect Ratio Options</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">aspect-{ratio}</code></p>
+        <div class="flex flex-wrap gap-2 mb-4" id="aspect-btns">
+          ${['aspect-auto','aspect-square','aspect-video'].map((s,i) => `<button class="btn-option text-xs ${i===1?'active':''}" onclick="aspectUpdate('${s}')">${s.replace('aspect-','')}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 flex justify-center">
+          <div data-preview class="aspect-square w-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-sm font-medium transition-all duration-300">Square 1:1</div>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">Resize the preview above to see aspect ratio behavior. The element's size is constrained by the <code class="text-sky-300">w-{size}</code> and aspect ratio.</p>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Common Use Cases</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-slate-900/70 rounded-lg p-3 border border-slate-700/30 text-center">
+            <div class="aspect-video w-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-xs font-medium mb-2">Video 16:9</div>
+            <span class="text-xs text-slate-500">aspect-video</span>
+          </div>
+          <div class="bg-slate-900/70 rounded-lg p-3 border border-slate-700/30 text-center">
+            <div class="aspect-square w-full max-w-[120px] mx-auto bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center text-white text-xs font-medium mb-2">Square</div>
+            <span class="text-xs text-slate-500">aspect-square</span>
+          </div>
+          <div class="bg-slate-900/70 rounded-lg p-3 border border-slate-700/30 text-center">
+            <div class="aspect-auto w-full bg-gradient-to-br from-amber-500 to-rose-600 rounded-lg flex items-center justify-center text-white text-xs font-medium mb-2" style="height:60px">Auto</div>
+            <span class="text-xs text-slate-500">aspect-auto</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="aspectCodeTw" class="text-emerald-300">aspect-square w-32</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="aspectCodeCss" class="text-amber-300">aspect-ratio: 1 / 1;\nwidth: 8rem;</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>`;
       return sec;
     }
+    window.aspectUpdate = function(value) {
+      const cont = document.getElementById('aspect-btns');
+      if (cont) { cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active')); cont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === value.replace('aspect-','')) b.classList.add('active'); }); }
+      const preview = document.querySelector('#section-aspect [data-preview]');
+      if (preview) {
+        preview.className = preview.className.replace(/aspect-\w+/g, '').replace(/\s+/g,' ').trim() + ' ' + value + ' w-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-sm font-medium transition-all duration-300';
+        preview.textContent = value.replace('aspect-','').replace('auto','Auto').replace('square','Square 1:1').replace('video','Video 16:9');
+      }
+      document.getElementById('aspectCodeTw').textContent = value + ' w-32';
+      const css = { 'aspect-auto': 'aspect-ratio: auto;', 'aspect-square': 'aspect-ratio: 1 / 1;', 'aspect-video': 'aspect-ratio: 16 / 9;' };
+      document.getElementById('aspectCodeCss').textContent = css[value] + '\nwidth: 8rem;';
+    };
     // ===== TEXT OVERFLOW / BREAK =====
     function buildTextOverflow() {
       const sec = document.createElement('div');
       sec.id = 'section-textOverflow'; sec.className = 'category-section'; sec.style.display = 'none';
       const lorem = 'This is a very long text that should demonstrate how different overflow and break utilities handle content that exceeds its container width.';
-      sec.innerHTML = '<h2 class="text-2xl font-bold mb-1">… Text Overflow & Break</h2><p class="text-slate-400 text-sm mb-6">Utilities for controlling text overflow, word breaks, and whitespace handling.</p>'
-        + sc('Truncate', 'truncate — single line with ellipsis', `<div class="w-48 truncate bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300 border border-slate-700/50">${lorem}</div>`)
-        + sc('Text Overflow', 'text-ellipsis, text-clip', `<div class="w-48 text-ellipsis overflow-hidden whitespace-nowrap bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300 border border-slate-700/50">${lorem}</div>` + `<div class="w-48 text-clip overflow-hidden whitespace-nowrap bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300 border border-slate-700/50 mt-2">${lorem} (clipped)</div>`)
-        + sc('Whitespace', 'whitespace-normal, whitespace-nowrap, whitespace-pre, whitespace-pre-line, whitespace-pre-wrap', '<div class="space-y-2"><div class="whitespace-nowrap bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50 overflow-x-auto"><b>nowrap:</b> No line breaks at all no matter what happens here</div><div class="whitespace-pre bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50"><b>pre:</b> Preserves  both  spaces  and<br>line breaks</div><div class="whitespace-pre-line bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50"><b>pre-line:</b> Collapses  extra  spaces but respects line breaks</div></div>')
-        + sc('Word Break', 'break-normal, break-words, break-all, break-keep', `<div class="w-40 bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50 break-words">${lorem.slice(0,60)} — break-words allows long words to wrap</div>` + `<div class="w-40 bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50 break-all mt-2">${lorem.slice(0,60)} — break-all breaks at any character</div>`)
-        + sc('Text Wrap', 'text-wrap, text-nowrap, text-balance, text-pretty', '<div class="space-y-2"><div class="text-wrap bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50">text-wrap — wraps normally at spaces</div><div class="text-nowrap bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50 overflow-x-auto">text-nowrap — no wrapping ever happens here at all</div><div class="text-balance max-w-60 bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50">text-balance — balances line lengths for better readability in headings</div></div>');
+      sec.innerHTML = `<h2 class="text-2xl font-bold mb-1">… Text Overflow & Break</h2>
+      <p class="text-slate-400 text-sm mb-6">Utilities for controlling text overflow, word breaks, and whitespace handling.</p>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Truncate</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">truncate</code> for single-line text with ellipsis</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="overflow-truncate-btns">
+          ${['truncate','overflow-visible','text-clip'].map((s,i) => `<button class="btn-option text-xs ${i===0?'active':''}" onclick="overflowTextUpdate('truncate','${s}')">${s}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div data-preview class="w-48 truncate bg-slate-800/50 rounded-lg p-3 text-sm text-slate-300 border border-slate-700/50">${lorem}</div>
+        </div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Whitespace</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">whitespace-{mode}</code> to control whitespace and line breaks</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="overflow-whitespace-btns">
+          ${['whitespace-normal','whitespace-nowrap','whitespace-pre','whitespace-pre-line'].map((s,i) => `<button class="btn-option text-xs ${i===0?'active':''}" onclick="overflowTextUpdate('whitespace','${s}')">${s.replace('whitespace-','')}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div data-preview class="w-48 whitespace-normal bg-slate-800/50 rounded-lg p-3 text-xs text-slate-300 border border-slate-700/50">This is some text with   extra spaces and<br>line breaks</div>
+        </div>
+      </div>
+
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-3">Word Break</h3>
+        <p class="text-slate-400 text-sm mb-3">Use <code class="text-sky-300">break-words</code> or <code class="text-sky-300">break-all</code> to control word wrapping</p>
+        <div class="flex flex-wrap gap-2 mb-4" id="overflow-break-btns">
+          ${['break-normal','break-words','break-all'].map((s,i) => `<button class="btn-option text-xs ${i===1?'active':''}" onclick="overflowTextUpdate('break','${s}')">${s.replace('break-','')}</button>`).join('')}
+        </div>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div data-preview class="w-40 break-words bg-slate-800/50 rounded-lg p-2 text-xs text-slate-300 border border-slate-700/50">SuperlongWordThatShouldWrapInInterestingWays</div>
+        </div>
+      </div>
+
+      <div class="code-block relative mt-6">
+        <div class="flex border-b border-slate-800">
+          <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
+          <button class="tab-btn" onclick="switchCodeTab(this,'css')">CSS</button>
+        </div>
+        <div class="code-tab" data-tab="tw"><pre><code id="overflowTextCodeTw" class="text-emerald-300">truncate</code></pre></div>
+        <div class="code-tab hidden" data-tab="css"><pre><code id="overflowTextCodeCss" class="text-amber-300">${escapeHtml('overflow: hidden;\ntext-overflow: ellipsis;\nwhite-space: nowrap;')}</code></pre></div>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>`;
       return sec;
     }
+    const overflowTextState = { truncate: 'truncate', whitespace: 'whitespace-normal', break: 'break-words' };
+    window.overflowTextUpdate = function(category, value) {
+      overflowTextState[category] = value;
+      const cont = document.getElementById('overflow-'+category+'-btns');
+      if (cont) { cont.querySelectorAll('.btn-option').forEach(b => b.classList.remove('active')); cont.querySelectorAll('.btn-option').forEach(b => { if (b.textContent.trim() === value.replace(/^(whitespace-|break-)/,'')) b.classList.add('active'); }); }
+      const sec = document.getElementById('section-textOverflow');
+      const previews = sec.querySelectorAll('[data-preview]');
+      if (category === 'truncate') {
+        const p = previews[0];
+        p.className = p.className.replace(/\btruncate\b|overflow-visible|text-clip/g, '').replace(/\s+/g,' ').trim() + ' ' + value;
+      } else if (category === 'whitespace') {
+        const p = previews[1];
+        p.className = 'w-48 bg-slate-800/50 rounded-lg p-3 text-xs text-slate-300 border border-slate-700/50 ' + value;
+      } else if (category === 'break') {
+        const p = previews[2];
+        p.className = p.className.replace(/break-\w+/g, '').replace(/\s+/g,' ').trim() + ' ' + value;
+      }
+      const tw = overflowTextState.truncate + ' ' + overflowTextState.whitespace + ' ' + overflowTextState.break;
+      document.getElementById('overflowTextCodeTw').textContent = tw;
+      const cssMap = {
+        'truncate': 'overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
+        'overflow-visible': 'overflow: visible;',
+        'text-clip': 'text-overflow: clip;',
+        'whitespace-normal': 'white-space: normal;',
+        'whitespace-nowrap': 'white-space: nowrap;',
+        'whitespace-pre': 'white-space: pre;',
+        'whitespace-pre-line': 'white-space: pre-line;',
+        'break-normal': 'word-break: normal;',
+        'break-words': 'word-break: break-word;',
+        'break-all': 'word-break: break-all;'
+      };
+      document.getElementById('overflowTextCodeCss').textContent = Object.values(overflowTextState).map(v => cssMap[v] || v).join('\n');
+    };
     function buildTwPlay() {
       const sec = document.createElement('div');
       sec.id = 'section-twplay';
@@ -2767,6 +3166,7 @@
 
     // ===== INIT =====
     function init() {
+      applyTheme();
       renderSidebar();
       buildAllSections();
       updateProgress();
