@@ -2349,6 +2349,36 @@
         </div>
       </div>
 
+      <!-- ===== Width Playground — Slider ===== -->
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-1">Width Playground</h3>
+        <p class="text-slate-400 text-sm mb-3">Drag the slider to change the container width and watch responsive behavior adapt live.</p>
+
+        <div class="mb-4">
+          <label class="text-xs text-slate-400 block mb-1">Container Width: <span id="respWidthVal" class="text-sky-300 font-mono">500</span>px</label>
+          <input type="range" min="200" max="900" value="500" class="slider-input w-full" oninput="responsiveWidthUpdate()" id="respWidthSlider">
+        </div>
+
+        <div id="respWidthPreview" style="width:500px; transition:width 0.1s;" class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30 mx-auto overflow-hidden">
+          <p style="font-size:clamp(0.875rem,4vw,2.25rem); font-weight:700;" class="text-blue-300 whitespace-nowrap">Fluid Heading</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-3" id="respWidthGrid">
+            <div class="bg-blue-500/30 rounded p-2 text-xs text-blue-300 text-center">Card 1</div>
+            <div class="bg-green-500/30 rounded p-2 text-xs text-green-300 text-center">Card 2</div>
+            <div class="bg-purple-500/30 rounded p-2 text-xs text-purple-300 text-center">Card 3</div>
+          </div>
+
+          <div style="width:min(100%,320px);" class="h-8 mt-3 rounded flex items-center justify-center text-xs text-white bg-gradient-to-r from-blue-500 to-purple-600">
+            min(100%, 320px)
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 mt-3 text-xs text-slate-500">
+          <span id="respWidthBreakpoint" class="px-2 py-0.5 rounded bg-slate-700/50 text-sky-300 font-mono">md:grid-cols-3</span>
+          <span id="respWidthClamp" class="px-2 py-0.5 rounded bg-slate-700/50 text-emerald-300 font-mono">clamp(14px, 4vw, 36px) → <span id="respClampPx">20px</span></span>
+        </div>
+      </div>
+
       <!-- ===== min() — Fluid Width ===== -->
       <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
         <h3 class="text-lg font-semibold mb-1">min() — Fluid Width</h3>
@@ -2419,6 +2449,28 @@
       };
       const l = layouts[layout];
       if (l) { demo.className = l.cls + ' [&>div]:rounded [&>div]:p-2 [&>div]:text-xs [&>div]:text-center'; if (note) note.textContent = l.note; }
+    };
+
+    window.responsiveWidthUpdate = function() {
+      const val = document.getElementById('respWidthSlider').value;
+      document.getElementById('respWidthVal').textContent = val;
+      const preview = document.getElementById('respWidthPreview');
+      if (preview) preview.style.width = val + 'px';
+
+      const w = parseInt(val);
+
+      // Update breakpoint indicator
+      const bp = document.getElementById('respWidthBreakpoint');
+      if (bp) {
+        if (w >= 768) bp.textContent = 'md:grid-cols-3';
+        else if (w >= 640) bp.textContent = 'sm:grid-cols-2';
+        else bp.textContent = 'grid-cols-1';
+      }
+
+      // Update clamp() value: clamp(0.875rem, 4vw, 2.25rem)
+      const clampPx = Math.min(36, Math.max(14, Math.round(w * 0.04)));
+      const clampEl = document.getElementById('respClampPx');
+      if (clampEl) clampEl.textContent = clampPx + 'px';
     };
 
     // ===== Z-INDEX =====
