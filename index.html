@@ -2336,6 +2336,43 @@
         <p id="responsiveLayoutNote" class="text-xs text-slate-500 mt-2">grid-cols-1 sm:grid-cols-2 md:grid-cols-3 — adapts at each breakpoint</p>
       </div>
 
+      <!-- ===== CLAMP — Fluid Typography ===== -->
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-1">clamp() — Fluid Typography</h3>
+        <p class="text-slate-400 text-sm mb-3"><code class="text-sky-300">font-size: clamp(0.875rem, 4vw, 2.25rem)</code> — scales between 14px and 36px based on container width.</p>
+        <div class="flex items-center gap-2 mb-2 text-xs text-slate-500">
+          <span>↔ Drag the handle to resize</span>
+        </div>
+        <div style="resize:horizontal; overflow:hidden; min-width:180px; max-width:100%;" class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <p style="font-size:clamp(0.875rem,4vw,2.25rem); font-weight:700; white-space:nowrap;" class="text-blue-300 transition-all">Fluid Heading</p>
+          <p class="text-xs text-slate-400 mt-1">Resize me → font-size slides between 14px and 36px.</p>
+        </div>
+      </div>
+
+      <!-- ===== min() — Fluid Width ===== -->
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-1">min() — Fluid Width</h3>
+        <p class="text-slate-400 text-sm mb-3"><code class="text-sky-300">width: min(100%, 320px)</code> — takes the smaller of 100% and 320px. Shrinks on narrow containers, caps at 320px.</p>
+        <div style="resize:horizontal; overflow:hidden; min-width:80px; max-width:100%;" class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div style="width:min(100%,320px);" class="h-12 rounded-lg flex items-center justify-center font-semibold text-sm text-white bg-gradient-to-r from-blue-500 to-purple-600">
+            min(100%, 320px)
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Narrow the container → bar shrinks. Widen → caps at 320px.</p>
+        </div>
+      </div>
+
+      <!-- ===== max() — Minimum Height ===== -->
+      <div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <h3 class="text-lg font-semibold mb-1">max() — Minimum Height</h3>
+        <p class="text-slate-400 text-sm mb-3"><code class="text-sky-300">min-height: max(100px, 10vw)</code> — box is at least 100px tall, scales up on wide viewports.</p>
+        <div class="bg-slate-900/70 rounded-lg p-4 border border-slate-700/30">
+          <div style="min-height:max(100px,10vw);" class="w-full rounded-lg flex items-center justify-center font-semibold text-sm text-white bg-gradient-to-r from-emerald-500 to-teal-600">
+            Always at least 100px tall
+          </div>
+          <p class="text-xs text-slate-400 mt-2">The 10vw grows the box on wider viewports, but max(100px, 10vw) keeps it from shrinking below 100px.</p>
+        </div>
+      </div>
+
       <div class="code-block relative mt-6">
         <div class="flex border-b border-slate-800">
           <button class="tab-btn active" onclick="switchCodeTab(this,'tw')">Tailwind</button>
