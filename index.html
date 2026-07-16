@@ -297,6 +297,11 @@
         ? 'bg-slate-900 text-slate-100 antialiased'
         : 'bg-slate-50 text-slate-900 antialiased';
       document.getElementById('themeIcon').textContent = themeMode === 'dark' ? '🌙' : '☀️';
+      // Sync Components section toggle if it exists
+      const compIcon = document.getElementById('componentsThemeIcon');
+      const compLabel = document.getElementById('componentsThemeLabel');
+      if (compIcon) compIcon.textContent = themeMode === 'dark' ? '🌙' : '☀️';
+      if (compLabel) compLabel.textContent = themeMode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     }
     function toggleTheme() {
       themeMode = themeMode === 'dark' ? 'light' : 'dark';
@@ -2657,6 +2662,79 @@
       const sec = document.createElement('div');
       sec.id = 'section-components'; sec.className = 'category-section'; sec.style.display = 'none';
       let html = '<h2 class="text-2xl font-bold mb-1">🧩 Component Templates</h2><p class="text-slate-400 text-sm mb-6">Pre-built website components you can tweak and reuse. Each has style variants — pick one, see the code.</p>';
+
+      // Dark/Light mode toggle + guide card
+      html += `<div class="section-card bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:p-6 mb-6 fade-in">
+        <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold mb-2">🌓 Dark / Light Mode</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">
+              This playground uses Tailwind\'s <code class="text-sky-300">darkMode: \'class\'</code> strategy — 
+              the <code class="text-sky-300">dark</code> class on <code class="text-sky-300">&lt;html&gt;</code> enables dark styles. 
+              Every component preview here respects the current theme.
+            </p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button onclick="toggleTheme()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/25">
+                <span id="componentsThemeIcon" class="text-lg">🌙</span>
+                <span id="componentsThemeLabel">Switch to Light Mode</span>
+              </button>
+              <button onclick="document.getElementById('darkGuideCard').classList.toggle('hidden')" class="px-4 py-2 rounded-lg font-medium text-sm transition-all btn-option active">
+                📖 Usage Guide
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="darkGuideCard" class="hidden mt-4 pt-4 border-t border-slate-700/50">
+          <h4 class="font-semibold mb-2 text-sm">How to Use Dark Mode in Your Project</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-slate-900/70 rounded-lg p-4">
+              <h5 class="font-medium text-sky-300 mb-2">1. Enable darkMode in tailwind.config</h5>
+              <pre class="text-xs text-emerald-300 mt-1 overflow-x-auto"><code>// tailwind.config.js
+module.exports = {
+  darkMode: \'class\',  // or \'media\'
+  // ...
+}</code></pre>
+            </div>
+            <div class="bg-slate-900/70 rounded-lg p-4">
+              <h5 class="font-medium text-sky-300 mb-2">2. Add dark: classes to HTML</h5>
+              <pre class="text-xs text-emerald-300 mt-1 overflow-x-auto"><code>&lt;div class="bg-white <span class="text-amber-300">dark:bg-slate-800</span>
+     text-black <span class="text-amber-300">dark:text-white</span>"&gt;
+  Content
+&lt;/div&gt;</code></pre>
+            </div>
+            <div class="bg-slate-900/70 rounded-lg p-4">
+              <h5 class="font-medium text-sky-300 mb-2">3. Toggle the dark class</h5>
+              <pre class="text-xs text-emerald-300 mt-1 overflow-x-auto"><code>// Add/remove on &lt;html&gt; element
+document.documentElement
+  .classList.toggle(\'dark\');
+
+// Or with localStorage persistence
+localStorage.setItem(\'theme\',
+  theme === \'dark\' ? \'light\' : \'dark\');</code></pre>
+            </div>
+            <div class="bg-slate-900/70 rounded-lg p-4">
+              <h5 class="font-medium text-sky-300 mb-2">4. Style the toggle button</h5>
+              <pre class="text-xs text-emerald-300 mt-1 overflow-x-auto"><code>&lt;button onclick="toggleTheme()"
+  class="p-2 rounded-lg
+    <span class="text-amber-300">dark:hover:bg-slate-700</span>
+    hover:bg-slate-200"&gt;
+  🌙
+&lt;/button&gt;</code></pre>
+            </div>
+          </div>
+          <div class="mt-4 bg-blue-900/30 border border-blue-700/30 rounded-lg p-3 text-xs text-slate-300">
+            <strong>💡 Pro Tips:</strong>
+            <ul class="mt-1 space-y-1 list-disc list-inside">
+              <li>Use <code class="text-sky-300">darkMode: \'class\'</code> (not <code class="text-sky-300">\'media\'</code>) to let users control theme rather than OS setting.</li>
+              <li>Pair with <code class="text-sky-300">@media (prefers-color-scheme: dark)</code> in CSS if you want OS-default + manual override.</li>
+              <li>Test ALL components in both modes — contrast issues are the #1 dark mode bug.</li>
+              <li>Use <code class="text-sky-300">dark:bg-slate-800/50</code> (with opacity) for subtle backgrounds instead of solid dark.</li>
+              <li>This playground\'s light mode overrides are in <code class="text-sky-300">&lt;style&gt;</code> (~line 97) — they target <code class="text-sky-300">html:not(.dark)</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>`;
+
       html += compDefs.map(t => {
         const keys = Object.keys(t.variants), fst = keys[0], v = t.variants[fst];
         const pid = t.id[0].toUpperCase() + t.id.slice(1);
