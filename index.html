@@ -158,18 +158,142 @@
       <div id="contentArea" class="p-4 md:p-6 max-w-5xl mx-auto flex-1">
         <!-- Content rendered by JS -->
         <div id="welcomeSection" class="fade-in">
-          <div class="text-center py-16">
+          <!-- Hero -->
+          <div class="text-center py-10 md:py-14">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 mb-6">
               <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
-            <h2 class="text-3xl font-bold mb-3">Interactive Tailwind CSS Playground</h2>
-            <p class="text-slate-400 max-w-lg mx-auto mb-8">Learn Tailwind CSS visually. Click a category on the left to start exploring utilities with live previews, interactive demos, and real-time code.</p>
-            <div class="flex flex-wrap justify-center gap-3">
-              <button onclick="navigateTo('flexbox')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg font-medium transition-colors text-sm">Start with Flexbox →</button>
-              <button onclick="navigateTo('grid')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium transition-colors text-sm">Grid Playground</button>
-              <button onclick="navigateTo('transform')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium transition-colors text-sm">Transform Lab</button>
-              <button onclick="navigateTo('twplay')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-lg font-medium transition-colors text-sm">🎮 Tailwind Play</button>
+            <h2 class="text-3xl font-bold mb-2">Interactive Tailwind CSS Playground</h2>
+            <p class="text-slate-400 max-w-xl mx-auto mb-6 text-sm">Learn Tailwind CSS visually. Pick a section below to explore utilities with live previews, interactive demos, and real-time code.</p>
+          </div>
+
+          <!-- Priority-ordered CTA cards: most common/used first -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+            <!-- LAYOUT (most used) -->
+            <div onclick="navigateTo('flexbox')" class="section-card bg-gradient-to-r from-slate-800/60 to-blue-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">⧉</div>
+                <div><h3 class="font-semibold text-sm">Flexbox</h3><p class="text-xs text-slate-400">Justify, align, wrap, direction — the backbone of every layout.</p></div>
+              </div>
             </div>
+            <div onclick="navigateTo('grid')" class="section-card bg-gradient-to-r from-slate-800/60 to-emerald-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">⊞</div>
+                <div><h3 class="font-semibold text-sm">Grid</h3><p class="text-xs text-slate-400">Columns, rows, spans, and gap controls for 2D layouts.</p></div>
+              </div>
+            </div>
+
+            <!-- TYPOGRAPHY -->
+            <div onclick="navigateTo('typography')" class="section-card bg-gradient-to-r from-slate-800/60 to-purple-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">A</div>
+                <div><h3 class="font-semibold text-sm">Typography</h3><p class="text-xs text-slate-400">Font sizes, weights, leading, tracking, and text decoration.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('colors')" class="section-card bg-gradient-to-r from-slate-800/60 to-pink-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-pink-500/50 hover:shadow-lg hover:shadow-pink-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">🎨</div>
+                <div><h3 class="font-semibold text-sm">Colors</h3><p class="text-xs text-slate-400">Full palette explorer — text, bg, border, and custom colors.</p></div>
+              </div>
+            </div>
+
+            <!-- SPACING -->
+            <div onclick="navigateTo('margin')" class="section-card bg-gradient-to-r from-slate-800/60 to-amber-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-amber-500/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">📏</div>
+                <div><h3 class="font-semibold text-sm">Margin & Spacing</h3><p class="text-xs text-slate-400">m-, p-, gap-, space- utilities for every direction and size.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('sizing')" class="section-card bg-gradient-to-r from-slate-800/60 to-cyan-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">📐</div>
+                <div><h3 class="font-semibold text-sm">Sizing</h3><p class="text-xs text-slate-400">w-, h-, min/max width/height — full control over element dimensions.</p></div>
+              </div>
+            </div>
+
+            <!-- BACKGROUNDS & BORDERS -->
+            <div onclick="navigateTo('backgrounds')" class="section-card bg-gradient-to-r from-slate-800/60 to-indigo-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-indigo-500/50 hover:shadow-lg hover:shadow-indigo-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">🖼</div>
+                <div><h3 class="font-semibold text-sm">Backgrounds</h3><p class="text-xs text-slate-400">Color, gradients, image, size, position, attachment utilities.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('border')" class="section-card bg-gradient-to-r from-slate-800/60 to-rose-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-rose-500/50 hover:shadow-lg hover:shadow-rose-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-rose-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">⊡</div>
+                <div><h3 class="font-semibold text-sm">Borders</h3><p class="text-xs text-slate-400">Width, style, color, radius — from sharp to fully rounded.</p></div>
+              </div>
+            </div>
+
+            <!-- SHADOWS -->
+            <div onclick="navigateTo('shadow')" class="section-card bg-gradient-to-r from-slate-800/60 to-orange-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">◑</div>
+                <div><h3 class="font-semibold text-sm">Shadows</h3><p class="text-xs text-slate-400">shadow-sm through shadow-2xl — add depth to any element.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('animation')" class="section-card bg-gradient-to-r from-slate-800/60 to-violet-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">✦</div>
+                <div><h3 class="font-semibold text-sm">Animations</h3><p class="text-xs text-slate-400">Spin, pulse, ping, bounce, and custom keyframes with live previews.</p></div>
+              </div>
+            </div>
+
+            <!-- TRANSITIONS -->
+            <div onclick="navigateTo('transition')" class="section-card bg-gradient-to-r from-slate-800/60 to-teal-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-teal-500/50 hover:shadow-lg hover:shadow-teal-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">▶</div>
+                <div><h3 class="font-semibold text-sm">Transitions</h3><p class="text-xs text-slate-400">Property, duration, easing, delay — smooth state changes.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('transform')" class="section-card bg-gradient-to-r from-slate-800/60 to-sky-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-sky-500/50 hover:shadow-lg hover:shadow-sky-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-sky-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">◈</div>
+                <div><h3 class="font-semibold text-sm">Transforms</h3><p class="text-xs text-slate-400">Scale, rotate, translate, skew — interactive transform playground.</p></div>
+              </div>
+            </div>
+
+            <!-- HOVER & RESPONSIVE -->
+            <div onclick="navigateTo('hover')" class="section-card bg-gradient-to-r from-slate-800/60 to-lime-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-lime-500/50 hover:shadow-lg hover:shadow-lime-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-lime-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">👆</div>
+                <div><h3 class="font-semibold text-sm">Hover States</h3><p class="text-xs text-slate-400">Pseudo-class utilities for interactive feedback on hover, focus, active.</p></div>
+              </div>
+            </div>
+            <div onclick="navigateTo('responsive')" class="section-card bg-gradient-to-r from-slate-800/60 to-fuchsia-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-fuchsia-500/50 hover:shadow-lg hover:shadow-fuchsia-500/10 transition-all group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-fuchsia-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">📱</div>
+                <div><h3 class="font-semibold text-sm">Responsive</h3><p class="text-xs text-slate-400">sm/md/lg/xl/2xl breakpoint prefixes for adaptive designs.</p></div>
+              </div>
+            </div>
+
+            <!-- COMPONENTS -->
+            <div onclick="navigateTo('components')" class="section-card bg-gradient-to-r from-slate-800/60 to-red-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-red-500/50 hover:shadow-lg hover:shadow-red-500/10 transition-all group md:col-span-2">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0 text-lg group-hover:scale-110 transition-transform">🧩</div>
+                <div>
+                  <h3 class="font-semibold text-sm">Ready-to-Use Components</h3>
+                  <p class="text-xs text-slate-400">Navbars, buttons, cards, forms, modals, dropdowns, toasts, tables, banners, timelines, skeleton loaders, and 30+ more pre-built templates with style variants.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick stats bar -->
+          <div class="flex flex-wrap justify-center gap-4 md:gap-8 text-center text-xs text-slate-500 border-t border-slate-800/50 pt-6 mb-6">
+            <div><span class="font-bold text-slate-300 text-sm block">32</span>Category Sections</div>
+            <div><span class="font-bold text-slate-300 text-sm block">30+</span>Component Templates</div>
+            <div><span class="font-bold text-slate-300 text-sm block">3</span>Code Tabs per Demo</div>
+            <div><span class="font-bold text-slate-300 text-sm block">🌓</span>Dark/Light Mode</div>
+            <div><span class="font-bold text-slate-300 text-sm block">🎮</span>Live Tailwind Play</div>
+          </div>
+
+          <!-- Bottom CTA -->
+          <div class="text-center mb-4">
+            <button onclick="navigateTo('twplay')" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-xl font-medium text-sm shadow-lg shadow-blue-600/25 transition-all">
+              🎮 Try the Live Tailwind Play Editor →
+            </button>
+            <p class="text-[10px] text-slate-600 mt-2">Type any Tailwind class and see it rendered instantly</p>
           </div>
         </div>
       </div>
@@ -2607,8 +2731,19 @@
     // ===== TAILWIND PLAY =====
     // ===== COMPONENTS TEMPLATE LIBRARY (data-driven) =====
     const compDefs = [
-      { id: 'nav', title: 'Navbar', html: '<span class="font-bold">Logo</span><div class="flex items-center gap-4"><a href="#" class="text-xs text-slate-300 hover:text-white">Home</a><a href="#" class="text-xs text-slate-300 hover:text-white">About</a><a href="#" class="text-xs text-slate-300 hover:text-white">Contact</a></div><button class="text-xs bg-blue-500 hover:bg-blue-400 px-3 py-1 rounded-lg">Sign Up</button>',
-        variants: { solid: {c:'flex items-center justify-between px-4 py-3 bg-slate-700 text-white text-sm',d:'bg-slate-700 text-white'}, glass: {c:'flex items-center justify-between px-4 py-3 bg-white/10 backdrop-blur-md text-white border-b border-white/10 text-sm',d:'bg-white/10 backdrop-blur-md text-white'}, gradient: {c:'flex items-center justify-between px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm',d:'bg-gradient-to-r from-blue-600 to-purple-600 text-white'} } },
+      // Navbar — professional, responsive, dark-mode aware
+      { id: 'navbar', title: 'Navbar',
+        variants: {
+          simple: { c: 'flex items-center justify-between bg-slate-800/50 rounded-xl px-4 py-3 border border-slate-700/50 w-full', d: 'flex items-center justify-between rounded-xl px-4 py-3 bg-slate-800/50',
+            h: '<div class="flex items-center gap-2"><span class="text-base font-bold text-white">Logo</span></div><div class="hidden md:flex items-center gap-4"><a class="text-xs text-blue-400 font-medium">Home</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Features</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Pricing</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">About</a></div><div class="flex items-center gap-2"><button class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">Get Started</button><button class="md:hidden text-slate-400 hover:text-white p-1"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>' },
+          glass: { c: 'flex items-center justify-between bg-white/10 backdrop-blur-xl rounded-xl px-4 py-3 border border-white/10 w-full', d: 'flex items-center justify-between rounded-xl px-4 py-3 backdrop-blur-xl',
+            h: '<div class="flex items-center gap-2"><span class="text-base font-bold text-white">Logo</span></div><div class="hidden md:flex items-center gap-5"><a class="text-xs text-white font-medium">Home</a><a class="text-xs text-white/60 hover:text-white cursor-pointer">Features</a><a class="text-xs text-white/60 hover:text-white cursor-pointer">Pricing</a><a class="text-xs text-white/60 hover:text-white cursor-pointer">About</a></div><div class="flex items-center gap-2"><button class="bg-white/20 hover:bg-white/30 text-white text-xs font-medium px-3 py-1.5 rounded-lg backdrop-blur transition-colors">Sign In</button><button class="md:hidden text-white/60 hover:text-white p-1"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>' },
+          centered: { c: 'flex flex-col items-center gap-3 bg-slate-800/50 rounded-xl px-4 py-4 border border-slate-700/50 w-full', d: 'flex flex-col items-center gap-3 rounded-xl px-4 py-4 bg-slate-800/50',
+            h: '<div class="text-base font-bold text-white">Brand</div><div class="flex items-center gap-5"><a class="text-xs text-blue-400 font-medium">Home</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Products</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Docs</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Blog</a><a class="text-xs text-slate-400 hover:text-slate-200 cursor-pointer">Contact</a></div><div class="flex items-center gap-2"><button class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium px-4 py-1.5 rounded-full transition-colors">Subscribe</button></div>' },
+          shadow: { c: 'flex items-center justify-between bg-slate-800/80 rounded-xl px-4 py-3 border border-slate-700/50 shadow-lg shadow-slate-900/50 w-full', d: 'flex items-center justify-between rounded-xl px-4 py-3 shadow-lg',
+            h: '<div class="flex items-center gap-2"><span class="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">A</span><span class="text-sm font-bold text-white">Acme</span></div><div class="hidden md:flex items-center gap-5"><a class="text-xs text-slate-300 hover:text-white cursor-pointer">Dashboard</a><a class="text-xs text-blue-400 font-medium">Projects</a><a class="text-xs text-slate-300 hover:text-white cursor-pointer">Team</a><a class="text-xs text-slate-300 hover:text-white cursor-pointer">Settings</a></div><div class="flex items-center gap-3"><div class="hidden sm:flex items-center gap-1 text-xs text-slate-500"><span class="w-2 h-2 rounded-full bg-green-400"></span>Online</div><div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-pink-500 flex items-center justify-center text-white text-[10px] font-bold">JD</div><button class="md:hidden text-slate-400 hover:text-white p-1"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>' },
+        } },
+      // --- existing first component below ---
       { id: 'card', title: 'Card', html: '<div class="w-full h-24 bg-gradient-to-br from-blue-400 to-purple-500 rounded-md mb-3"></div><h4 class="font-bold text-sm mb-1">Card Title</h4><p class="text-xs text-slate-500 mb-3">Sample card body.</p><button class="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg">Action</button>',
         variants: { basic: {c:'bg-white rounded-lg p-4 text-slate-800 max-w-sm',d:'bg-white rounded-lg p-4'}, shadow: {c:'bg-white rounded-xl p-4 text-slate-800 max-w-sm shadow-lg shadow-black/10',d:'bg-white rounded-xl p-4 shadow-lg'}, interactive: {c:'bg-white rounded-xl p-4 text-slate-800 max-w-sm shadow-md hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all',d:'bg-white rounded-xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 cursor-pointer'}, border: {c:'bg-white rounded-lg p-4 text-slate-800 max-w-sm border-2 border-blue-200',d:'bg-white rounded-lg p-4 border-2 border-blue-200'} } },
       { id: 'alert', title: 'Alert',
