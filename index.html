@@ -14,17 +14,29 @@
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #1e293b; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-    .sidebar-link { transition: all 0.15s ease; }
+    /* Sidebar */
+    .sidebar-link { transition: all 0.15s ease; position: relative; }
     .sidebar-link:hover { background: rgba(59,130,246,0.1); }
-    .sidebar-link.active { background: rgba(59,130,246,0.2); color: #60a5fa; border-right: 2px solid #3b82f6; }
+    .sidebar-link.active {
+      background: rgba(59,130,246,0.2); color: #60a5fa;
+      border-left: 2px solid #3b82f6;
+      border-radius: 0.5rem 0 0 0.5rem;
+    }
 
     .preview-box { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
     .preview-box > * { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Section cards */
+    .section-card {
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+    }
 
     .code-block { background: #0f172a; border-radius: 0.5rem; overflow: hidden; }
     .code-block pre { overflow-x: auto; padding: 1rem; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.8125rem; line-height: 1.6; }
@@ -97,14 +109,39 @@
     /* Light mode overrides */
     html:not(.dark) body { background: #f8fafc; color: #0f172a; }
     html:not(.dark) .sidebar-link { color: #475569; }
+    html:not(.dark) .sidebar-link.active { background: rgba(59,130,246,0.15); color: #2563eb; }
+    html:not(.dark) .sidebar-link:hover { background: rgba(59,130,246,0.08); }
     html:not(.dark) .btn-option:not(.active) { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    html:not(.dark) .btn-option:not(.active):hover { background: #e2e8f0; color: #334155; }
     html:not(.dark) .code-block { background: #1e293b; }
+    html:not(.dark) .tab-btn:not(.active):hover { background: #e2e8f0; color: #334155; }
+    html:not(.dark) .copy-btn { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    html:not(.dark) .copy-btn:hover { background: #e2e8f0; color: #334155; }
+    html:not(.dark) .section-card { box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); }
+
+    /* Light mode overrides for Tailwind utility classes used by JS sections */
     html:not(.dark) .bg-slate-800\/50 { background: #f1f5f9; }
-    html:not(.dark) .border-slate-700\/50 { border-color: #cbd5e1; }
-    html:not(.dark) .text-slate-400 { color: #64748b; }
-    html:not(.dark) .text-slate-100 { color: #0f172a; }
     html:not(.dark) .bg-slate-900\/70 { background: #ffffff; }
-    html:not(.dark) .border-slate-700\/30 { border-color: #e2e8f0; }
+    html:not(.dark) .bg-slate-800 { background: #f1f5f9; }
+    html:not(.dark) .bg-slate-900 { background: #ffffff; }
+    html:not(.dark) .border-slate-700\/50 { border-color: #e2e8f0; }
+    html:not(.dark) .border-slate-700\/30 { border-color: #f1f5f9; }
+    html:not(.dark) .border-slate-700 { border-color: #e2e8f0; }
+    html:not(.dark) .border-slate-600 { border-color: #cbd5e1; }
+    html:not(.dark) .border-slate-800 { border-color: #e2e8f0; }
+    html:not(.dark) .text-slate-400 { color: #64748b; }
+    html:not(.dark) .text-slate-300 { color: #475569; }
+    html:not(.dark) .text-slate-100 { color: #0f172a; }
+    html:not(.dark) .text-sky-300 { color: #0284c7; }
+    html:not(.dark) .text-emerald-300 { color: #059669; }
+    html:not(.dark) .text-amber-300 { color: #d97706; }
+    html:not(.dark) .hover\:bg-slate-800:hover { background: #e2e8f0; }
+    html:not(.dark) .slider-input { background: #cbd5e1; }
+    html:not(.dark) .slider-input::-webkit-slider-thumb { border-color: #f8fafc; }
+    html:not(.dark) .slider-input::-moz-range-thumb { border-color: #f8fafc; }
+    html:not(.dark) .pos-demo-container { background: #e2e8f0; }
+    html:not(.dark) .key-hint { background: #e2e8f0; color: #64748b; }
+    html:not(.dark) .badge { color: #475569; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 antialiased">
