@@ -19,7 +19,7 @@ Most Tailwind references are either a wall of text or a docs site you have to sc
 
 - **🎮 Tailwind Play REPL** — type any classes and watch them render in real time. One element per line, no setup.
 - **36 interactive sections** — Typography, Colors, Spacing, Flexbox, Grid, Border, Shadow, Transform, Animation, Hover, Responsive, Z-index, Ring, Backdrop, Aspect, and more — each with a live preview and copyable code.
-- **🧩 Component library** — pre-built UI snippets (Navbar, Card, Modal, Pricing Table, Pagination, Toast, Skeleton, Timeline, FAQ, and more) with clickable style variants.
+- **🧩 6 component templates** — pre-built UI blocks (Comment, Banner, FAQ, Timeline, Button, Form Input), each with clickable style variants. A small but growing library.
 - **🌓 Dark / Light mode** — one-click toggle, remembered via `localStorage`.
 - **🔎 Search** — jump straight to any class, category, or component by keyword.
 - **📋 Code dock** — every demo shows its Tailwind + compiled CSS with a one-click copy button.
