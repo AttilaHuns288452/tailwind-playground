@@ -8,7 +8,30 @@
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } }
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: {
+              50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',
+              400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',
+              800:'#3730a3',900:'#312e81'
+            }
+          },
+          boxShadow: {
+            glow: '0 0 0 1px rgba(99,102,241,.25), 0 14px 40px -12px rgba(99,102,241,.5)',
+            'glow-sm': '0 0 22px -6px rgba(99,102,241,.55)'
+          },
+          keyframes: {
+            fadeUp: { '0%': { opacity:0, transform:'translateY(10px)' }, '100%': { opacity:1, transform:'translateY(0)' } },
+            floaty: { '0%,100%': { transform:'translateY(0)' }, '50%': { transform:'translateY(-6px)' } }
+          },
+          animation: {
+            'fade-up': 'fadeUp .5s cubic-bezier(.4,0,.2,1) both',
+            floaty: 'floaty 6s ease-in-out infinite'
+          }
+        }
+      }
     }
   </script>
   <style>
@@ -143,6 +166,69 @@
     html:not(.dark) .key-hint { background: #e2e8f0; color: #64748b; }
     html:not(.dark) .badge { color: #475569; }
   </style>
+  <style id="redesign">
+    /* ---- Modern design layer (additive) ---- */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+      background:
+        radial-gradient(48rem 48rem at 10% -10%, rgba(99,102,241,.20), transparent 60%),
+        radial-gradient(42rem 42rem at 100% 0%, rgba(217,70,239,.16), transparent 55%),
+        radial-gradient(52rem 52rem at 85% 110%, rgba(14,165,233,.14), transparent 55%);
+      animation: redesign-drift 18s ease-in-out infinite alternate;
+    }
+    @keyframes redesign-drift{ from{ transform: translate3d(0,0,0) scale(1);} to{ transform: translate3d(0,-12px,0) scale(1.04);} }
+    html:not(.dark) body::before{ opacity:.55; }
+
+    .glass{ background: rgba(15,23,42,.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    html:not(.dark) .glass{ background: rgba(255,255,255,.7); }
+
+    .text-gradient{
+      background: linear-gradient(100deg,#818cf8,#c084fc 45%,#38bdf8);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+
+    .hero-pill{
+      display:inline-flex; align-items:center; gap:.4rem; font-size:.7rem; font-weight:600;
+      padding:.3rem .8rem; border-radius:9999px; color:#c7d2fe;
+      background: rgba(99,102,241,.12); border:1px solid rgba(129,140,248,.35);
+    }
+    html:not(.dark) .hero-pill{ color:#4338ca; background: rgba(99,102,241,.1); border-color: rgba(79,70,229,.3); }
+
+    .section-card{ position:relative; }
+    .welcome-grid .section-card::after{
+      content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; opacity:0;
+      background: linear-gradient(120deg, rgba(129,140,248,.7), rgba(217,70,239,.6));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; transition: opacity .25s;
+    }
+    .welcome-grid .section-card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px -18px rgba(99,102,241,.6); }
+    .welcome-grid .section-card:hover::after{ opacity:1; }
+
+    .welcome-grid > .section-card{ animation: fadeUp .5s cubic-bezier(.4,0,.2,1) both; }
+    .welcome-grid > .section-card:nth-child(1){ animation-delay:.02s }
+    .welcome-grid > .section-card:nth-child(2){ animation-delay:.06s }
+    .welcome-grid > .section-card:nth-child(3){ animation-delay:.10s }
+    .welcome-grid > .section-card:nth-child(4){ animation-delay:.14s }
+    .welcome-grid > .section-card:nth-child(5){ animation-delay:.18s }
+    .welcome-grid > .section-card:nth-child(6){ animation-delay:.22s }
+    .welcome-grid > .section-card:nth-child(7){ animation-delay:.26s }
+    .welcome-grid > .section-card:nth-child(8){ animation-delay:.30s }
+    .welcome-grid > .section-card:nth-child(9){ animation-delay:.34s }
+    .welcome-grid > .section-card:nth-child(10){ animation-delay:.38s }
+    .welcome-grid > .section-card:nth-child(11){ animation-delay:.42s }
+    .welcome-grid > .section-card:nth-child(12){ animation-delay:.46s }
+    @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+
+    .sidebar-link.active{ box-shadow: 0 0 0 1px rgba(99,102,241,.35), 0 8px 24px -12px rgba(99,102,241,.7); }
+
+    #codeDock{ border-top: 1px solid rgba(129,140,248,.25) !important; box-shadow: 0 -10px 30px -18px rgba(99,102,241,.6); }
+    #codeDock::before{
+      content:""; position:absolute; left:0; right:0; top:0; height:2px;
+      background: linear-gradient(90deg, transparent, rgba(129,140,248,.9), rgba(217,70,239,.9), transparent);
+    }
+
+    .brand-logo{ filter: drop-shadow(0 0 10px rgba(99,102,241,.6)); }
+  </style>
 </head>
 <body class="bg-slate-900 text-slate-100 antialiased">
   <div id="app" class="flex min-h-screen">
@@ -150,9 +236,14 @@
     <aside id="sidebar" class="w-64 shrink-0 border-r border-slate-700/50 bg-slate-900/95 backdrop-blur flex flex-col fixed md:sticky top-0 left-0 h-screen z-50 md:z-auto transition-transform duration-300 -translate-x-full md:translate-x-0">
       <div class="p-4 border-b border-slate-700/50">
         <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            <h1 class="font-bold text-sm">Tailwind Playground</h1>
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 flex items-center justify-center brand-logo shadow-glow-sm shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div class="leading-tight">
+              <h1 class="font-bold text-sm">Tailwind Playground</h1>
+              <p class="text-[10px] text-slate-500">Visual CSS reference</p>
+            </div>
           </div>
           <div class="flex gap-1">
             <button onclick="toggleTheme()" class="p-1.5 rounded-lg hover:bg-slate-800 transition-colors" title="Toggle theme" aria-label="Toggle theme">
@@ -196,16 +287,19 @@
         <!-- Content rendered by JS -->
         <div id="welcomeSection" class="fade-in">
           <!-- Hero -->
-          <div class="text-center py-10 md:py-14">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/10 mb-6">
-              <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <div class="text-center py-12 md:py-16">
+            <span class="hero-pill mb-5">✨ Interactive Tailwind CSS reference</span>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 mb-6 brand-logo animate-floaty">
+              <svg class="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
-            <h2 class="text-3xl font-bold mb-2">Interactive Tailwind CSS Playground</h2>
-            <p class="text-slate-400 max-w-xl mx-auto mb-6 text-sm">Learn Tailwind CSS visually. Pick a section below to explore utilities with live previews, interactive demos, and real-time code.</p>
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-3 tracking-tight">
+              Master <span class="text-gradient">Tailwind CSS</span><br class="hidden md:block" /> by playing with it
+            </h2>
+            <p class="text-slate-400 max-w-xl mx-auto mb-8 text-[15px] leading-relaxed">Learn Tailwind visually. Pick a section to explore utilities with live previews, interactive demos, and real-time code you can copy in one click.</p>
           </div>
 
           <!-- Priority-ordered CTA cards: most common/used first -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8 welcome-grid">
             <!-- LAYOUT (most used) -->
             <div onclick="navigateTo('flexbox')" class="section-card bg-gradient-to-r from-slate-800/60 to-blue-900/20 rounded-xl border border-slate-700/50 p-4 cursor-pointer hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all group">
               <div class="flex items-center gap-3">
